@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>角色管理</title>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css">
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript">
+
+	var url;
+
+	//设置授权列的内容为一个图标样式
+	function giveMenu(val,row){
+		return "<a href=\"javascript:openGrankMenuDlg("+row.roleId+")\"><image style='margin-top:3px' src='/static/images/edit.gif'></a>";
+	}
+	
+	//打开添加角色对话框
+	function openRoleAddDialog(){
+		$("#dlg").dialog("open").dialog("setTitle","添加角色");
+		url="/admin/role/saveRole";
+	}
+	
+	//打开修改角色对话框
+	function openRoleModifyDialog(){
+		var selectData=$("#dg").datagrid("getSelections");
+		if (selectData.length!=1) {
+			$.messager.alert("系统提示", "请选择一条需要修改的角色信息");
+			return;
+		}
+		var selectRow=selectData[0];
+		$("#dlg").dialog("open").dialog("setTitle","修改角色信息");
+		$("#fm").form("load",selectRow);
+		url="/admin/role/saveRole?roleId="+selectRow.roleId;
+	}
+	
+	//保存
+	function save(){
+		$("#fm").form("submit",{
+			url:url,
+			onSubmit:function(){
+				return $("#fm").form("validate");
+			},
+			success:function(result){
+				var result=eval('('+result+')');
+				if (result.success) {
+					$.messager.alert("系统提示", "保存成功");
+					$("#dlg").dialog("close");
+					$("#dg").datagrid("reload");
+				}else {
+					$.messager.alert("系统提示",result.errorInfo);
+				}
+			}
+		
+		})
+	}
+	
+	//删除角色
+	function deleteRole(){
+		var selectData=$("#dg").datagrid("getSelections");
+		if (selectData.length!=1) {
+			$.messager.alert("系统提示", "请选择一条需要删除的角色信息");
+			return;
+		}
+		var selectRow=selectData[0];
+		$.messager.confirm("系统提示", "您确认删除选中的角色信息吗？", function(r){
+			if (r) {
+				$.post("/admin/role/delete",{roleId:selectRow.roleId},function(result){
+					if (result.success) {
+						$.messager.alert("系统提示", "删除成功");
+						$("#dlg").dialog("close");
+						$("#dg").datagrid("reload");
+					}else {
+						$.messager.alert("系统提示","删除失败，请联系管理员");
+					}
+				},"json");
+				
+			}
+		})
+	}
+	
+	//模糊搜索
+	function searchRole(){
+		$("#dg").datagrid('reload',{
+			roleName:$("#s_roleName").val()
+		});
+	}
+	
+	//关闭添加或者修改角色对话框
+	function closeDlg(){
+		resetValue();
+		$("#dlg").dialog("close");
+	}
+	
+	//重置对话框的值为空
+	function resetValue(){
+		$("#roleId").val("");
+		$("#roleName").val("");
+		$("#remark").val("");
+	}
+	
+	//打开授予权限菜单对话框
+	function openGrankMenuDlg(roleId){
+		$("#dlg2").dialog("open").dialog("setTitle","授予权限菜单");
+		 //加载树
+		$("#menuTree").tree({
+			lines:true,
+			checkbox:true,
+			cascadeCheck:false,
+			url:'/admin/role/loadMenuTree?parentId=1&roleId='+roleId+'',
+			onLoadSuccess:function(){
+				$("#menuTree").tree('expandAll');
+			},
+			onCheck:function(node,checked){
+				  //如果用户选中一个节点，把选中节点的所有父级节点选上
+				  if(checked){
+					  //把当前节点的父亲节点传递个函数
+					 checkParentNode($("#menuTree").tree('getParent',node.target));
+				  }
+			  }
+			
+		});  
+		$("#roleId").val(roleId);
+	}
+	
+	 //递归获取指定节点的父亲节点
+	  function checkParentNode(node){
+		  if(!parentNode){
+			  return;
+		  }else{
+			  checkParentNode($("#menuTree").tree('getParent',node.target));
+			  $("#menuTree").tree("check",node.target);
+		  }
+	  }
+	 
+	 //保存给指定角色授予的菜单权限
+	 function saveMenu(){
+		 var roleId=$("#roleId").val();
+		 //获取菜单权限树中所有被选中的节点
+		 var checkedNodes=$("#menuTree").tree("getChecked");
+		 var menuIdsArry=[];
+		 menuIdsArry.push(1);
+		 for (var i = 0; i < checkedNodes.length; i++) {
+			 //把所有选中的节点menuId都封装进数组中
+			menuIdsArry.push(checkedNodes[i].id);
+		}
+		 //把数组转化为用,隔开的字符串形式
+		 var menuIds=menuIdsArry.join(",");
+		 $.post("/admin/role/saveMenus",{menuIds:menuIds,roleId:roleId},function(result){
+			 if (result.success) {
+				$.messager.alert("系统提示", "保存成功");
+				$("#dlg2").dialog("close");
+			}else {
+				$.messager.alert("系统提示", "保存失败，请联系管理员");
+			}
+		 },"json");
+	 }
+	 
+	 //关闭授予菜单权限对话框
+	 function closeGrankMenuDlg(){
+		 $("#dlg2").dialog("close");
+	 }
+</script>
+</head>
+<body style="padding: 2px;">
+		<table id="dg" class="easyui-datagrid" fit="true"  fitColumns="true" pagination="true"
+			singleSelect="true" url="/admin/role/roleListByName" toolbar="#tb">
+			<thead>
+				<th field="cb" checkbox="true" align="center"></th>
+				<th field="roleId" width="50px" hidden="true" align="center" >编号</th>
+				<th field="roleName" width="150px" align="center">角色名</th>
+				<th field="remark" width="200px" align="center">备注</th>
+				<th field="rank" width="50px;" align="center" formatter="giveMenu">授予权限</th>
+			</thead>
+		</table>
+		<div id="tb">
+			<div>
+				<a href="javascript:openRoleAddDialog()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
+				<a href="javascript:openRoleModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
+				<a href="javascript:deleteRole()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+			</div>
+			<div>
+				&nbsp;角色名：&nbsp;<input type="text" id="s_roleName" size="20" onkeydown="if(event.keyCode==13) searchRole()"/>
+				<a href="javascript:searchRole()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+			</div>
+		</div>
+		<div id="dlg" class="easyui-dialog" closed="true" style="width: 420px;height: 300px;padding: 10px 3px"
+			buttons="#bt" data-options="onClose:function(){resetValue()}">
+			<form id="fm" method="post">
+				<table cellspacing="8px">
+					<tr>
+						<td>角色名:</td>
+						<td><input type="text" id="roleName" name="roleName" class="easyui-validatebox" required="true" style="width: 250px;"/></td>
+					</tr>		
+					<tr>
+						<td valign="top">备&nbsp;&nbsp;注:</td>
+						<td><textarea rows="4" cols="40" id="remark" name="remark" ></textarea></td>
+					</tr>			
+				</table>
+			</form>
+	</div>
+	<div id="bt">
+		<a href="javascript:save()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+		<a href="javascript:closeDlg()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
+	</div>
+	
+	<div id="dlg2" class="easyui-dialog" closed="true" style="height: 500px;width: 400px;" buttons="#bt2">
+		<ul id="menuTree" class="easyui-tree" ></ul>
+		<!-- 为了方便在保存授予的菜单权限时需要传递roleId -->
+		<input type="text" id="roleId" hidden="true" />
+	</div>
+	<div id="bt2">
+		<a href="javascript:saveMenu()" class="easyui-linkbutton" iconCls="icon-ok">授权</a>
+		<a href="javascript:closeGrankMenuDlg()" class="easyui-linkbutton" iconCls="icon-cancel">关闭</a>
+	</div>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>客户管理</title>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css">
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript">
+
+	var url;
+	
+	
+	
+	//搜索客户
+	function searchCustomer(){
+		$("#dg").datagrid('reload',{
+			name:$("#s_name").val()
+		})
+	}
+	
+	//打开新建对话框
+	function openCustomerAddDialog(){
+		$("#name").removeAttr("readonly");
+		$("#dlg").dialog("open").dialog("setTitle","添加客户");
+		url="/admin/customer/save";
+	}
+	
+	//打开修改对话框
+	function openCustomerModifyDialog(){
+		var selecData=$("#dg").datagrid("getSelections");
+		if (selecData.length!=1) {
+			$.messager.alert("系统提示", "请选择一条需要更改的数据");
+			return;
+		}
+		var modifyData=selecData[0];
+		$("#dlg").dialog("open").dialog("setTitle","修改客户信息");
+		$("#fm").form('load',modifyData);
+		$("#name").attr("readonly","readonly");
+		url="/admin/customer/save?customerId="+modifyData.customerId;
+		
+	}
+	
+	//关闭对话框
+	function closeDlg(){
+		resetValue();
+		$("#dlg").dialog("close");
+	}
+	
+	//清空表单的值
+	function resetValue(){
+		$("#name").val("");
+		$("#concatName").val("");
+		$("#phoneNumber").val("");
+		$("#address").val("");
+		$("#remark").val("");
+		
+	}
+	
+	//保存
+	 function save(){
+		$("#fm").form("submit",{
+			url:url,
+			onSubmit:function(){
+				return $(this).form("validate");
+			},
+			success:function(result){
+				var result=eval('('+result+')');
+				if (result.success) {
+					$.messager.alert("系统提示","保存成功");
+					resetValue();
+					$("#dlg").dialog("close");
+					$("#dg").datagrid("reload");
+				}else{
+					$.messager.alert("系统提示","保存失败，请联系管理员");
+				}
+			}
+		});
+	} 
+	
+	//删除
+	 function deleteCustomer(){
+		var selectData=$("#dg").datagrid("getSelections");
+		if (selectData.length!=1) {
+			$.messager.alert("系统提示", "请选择一条需要删除的数据");
+			return;
+		}
+		var deleteData=selectData[0];
+		$.messager.confirm("系统提示", "您确认要删除选中的这条数据吗", function(r){
+			if (r) {
+				$.post("/admin/customer/delete",{customerId:deleteData.customerId},function(result){
+					if (result.success) {
+						$.messager.alert("系统提示", "数据已成功删除");
+						$("#dg").datagrid("reload");
+					}else{
+						$.messager.alert("系统提示", "删除失败，请联系管理员");
+					}
+				},"json")
+			}
+		})
+	} 
+	
+	
+</script>
+</head>
+<body style="margin: 2px;">
+	<table id="dg" class="easyui-datagrid" fitColumns="true" pagination="true" rownumbers="true"
+		singleSelect="true" fit="true" url="/admin/customer/customerList" toolbar="#tb">
+			<thead>
+				<th field="customerId" width="20px;" hidden="true" align="center">编号</th>
+				<th field="name" width="150px;" align="center">客户</th>
+				<th field="concatName" width="80px;" align="center">联系人</th>
+				<th field="phoneNumber" width="100px;" align="center">联系电话</th>
+				<th field="address" width="200px;" align="center">地址</th>
+				<th field="remark" width="250px;" align="center">备注</th>
+			</thead>
+	</table>
+	<div id="tb">
+		<div>
+			<a href="javascript:openCustomerAddDialog()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
+			<a href="javascript:openCustomerModifyDialog()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">修改</a>
+			<a href="javascript:deleteCustomer()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+		</div>
+		<div>
+			&nbsp;客户：&nbsp;<input type="text" id="s_name" size="20" onkeydown="if(event.keyCode==13) searchCustomer()"/>
+			<a href="javascript:searchCustomer()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+		</div>
+	</div>
+	
+	<div id="dlg" class="easyui-dialog" closed="true" style="width: 460px;height: 410px;padding: 10px 20px"
+		buttons="#bt" data-options="onClose:function(){resetValue()}">
+		<form id="fm" method="post">
+			<table cellspacing="8px">
+				<tr>
+					<td>客&nbsp;&nbsp;&nbsp;&nbsp;户:</td>
+					<td><input type="text" id="name" name="name" class="easyui-validatebox" required="true" style="250px;"/></td>
+				</tr>	
+				<tr>
+					<td>联&nbsp;系&nbsp;人:</td>
+					<td><input type="text" id="concatName" name=concatName class="easyui-validatebox" required="true"/></td>
+				</tr>	
+				<tr>
+					<td>联系电话:</td>
+					<td><input type="text" id="phoneNumber" name="phoneNumber" class="easyui-validatebos" required="true"/></td>
+				</tr>	
+				<tr>
+					<td>地&nbsp;&nbsp;&nbsp;&nbsp;址:</td>
+					<td><input type="text" id="address" name="address" class="easyui-validatebox" required="true"/></td>
+				</tr>
+				<tr>
+					<td valign="top">备&nbsp;&nbsp;&nbsp;&nbsp;注:</td>
+					<td><textarea rows="5" cols="40" id="remark" name="remark" ></textarea></td>
+				</tr>			
+			</table>
+		</form>
+	</div>
+	<div id="bt">
+		<a href="javascript:save()" class="easyui-linkbutton" iconCls="icon-ok" >保存</a>
+		<a href="javascript:closeDlg()" class="easyui-linkbutton" iconCls="icon-cancel" >关闭</a>
+	</div>
+	
+</body>
+</html>
