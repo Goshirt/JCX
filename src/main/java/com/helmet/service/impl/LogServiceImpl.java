@@ -63,7 +63,7 @@ public class LogServiceImpl implements LogService{
 						predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("date"), log.getStartTime()));
 					}
 					if (log.getEndTime()!=null) {
-						predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("date"), log.getEndTime()));
+						predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("date"), log.getEndTime()));
 					}
 				}
 				return predicate;

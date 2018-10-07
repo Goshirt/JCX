@@ -2,6 +2,8 @@ package com.helmet.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort.Direction;
+
 import com.helmet.entity.PuchaseList;
 import com.helmet.entity.PuchaseListGoods;
 
@@ -25,4 +27,22 @@ public interface PuchaseListService {
 	 * @param puchaseListGoodsList
 	 */
 	public void save(PuchaseList puchaseList,List<PuchaseListGoods> puchaseListGoodsList);
+	
+	/**
+	 * 根据进货单信息分页查询获取进货单列表
+	 * @param puchaseList
+	 * @param page
+	 * @param pageSize
+	 * @param direction
+	 * @param propertis
+	 * @return
+	 */
+	public List<PuchaseList> list(PuchaseList puchaseList,Integer page,Integer pageSize,Direction direction,String...propertis);
+	
+	/**
+	 * 根据进货单信息查询总数
+	 * @param puchaseList
+	 * @return
+	 */
+	public Long count(PuchaseList puchaseList);
 }

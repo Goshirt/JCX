@@ -3,8 +3,17 @@ package com.helmet.service.impl;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.helmet.entity.Goods;
@@ -69,6 +78,58 @@ public class PuchaseListServiceImpl implements PuchaseListService{
 			goodsRepository.save(goods);
 		}
 		puchaseListRepository.save(puchaseList);
+	}
+
+	@Override
+	public List<PuchaseList> list(PuchaseList puchaseList, Integer page, Integer pageSize, Direction direction,
+			String... propertis) {
+		Pageable pageable = new PageRequest(page-1, pageSize);
+		Page<PuchaseList> pagePuchaseList = puchaseListRepository.findAll(new Specification<PuchaseList>() {
+			
+			@Override
+			public Predicate toPredicate(Root<PuchaseList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				Predicate predicate = cb.conjunction();
+				if (puchaseList != null) {
+					if (puchaseList.getbPuchaseDate() != null) {
+						predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("bPuchaseDate"), puchaseList.getbPuchaseDate()));
+					}
+					if (puchaseList.getePuchaseDate() != null) {
+						predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("ePuchaseDate"), puchaseList.getePuchaseDate()));
+					}
+					if (puchaseList.getSupplier() != null) {
+						predicate.getExpressions().add(cb.like(root.get("supplier").get("name"), "%"+puchaseList.getSupplier().getName()+"%"));
+						
+					}
+				}
+				return predicate;
+			}
+		}, pageable);
+		return pagePuchaseList.getContent();
+	}
+
+	@Override
+	public Long count(PuchaseList puchaseList) {
+		Long count = puchaseListRepository.count(new Specification<PuchaseList>() {
+
+			@Override
+			public Predicate toPredicate(Root<PuchaseList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				Predicate predicate = cb.conjunction();
+				if (puchaseList != null) {
+					if (puchaseList.getbPuchaseDate() != null) {
+						predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("bPuchaseDate"), puchaseList.getbPuchaseDate()));
+					}
+					if (puchaseList.getePuchaseDate() != null) {
+						predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("ePuchaseDate"), puchaseList.getePuchaseDate()));
+					}
+					if (puchaseList.getSupplier() != null) {
+						predicate.getExpressions().add(cb.like(root.get("supplier"), "%"+puchaseList.getSupplier().getName()+"%"));
+						
+					}
+				}
+				return predicate;
+			}
+		});
+		return count;
 	}
 
 

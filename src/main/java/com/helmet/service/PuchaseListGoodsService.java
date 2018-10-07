@@ -1,5 +1,8 @@
 package com.helmet.service;
 
+import java.util.List;
+
+import com.helmet.entity.PuchaseListGoods;
 
 /**
  * 
@@ -9,9 +12,11 @@ package com.helmet.service;
  */
 public interface PuchaseListGoodsService {
 	
+	
 	/**
-	 * 获取当天最大的进货单号
+	 * 根据进货单Id获取进货单的所以商品信息
+	 * @param puchaseListId
 	 * @return
 	 */
-	public String getTodayMaxPuchaseNumber();
+	public List<PuchaseListGoods> getGoodsListByPuchaseListId(Integer puchaseListId);
 }

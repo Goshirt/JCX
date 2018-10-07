@@ -11,9 +11,11 @@ import javax.annotation.Resource;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -95,6 +97,24 @@ public class PuchaseListAdminController {
 		puchaseListService.save(puchaseList, puchaseListGoodsList);
 		logService.log(new Log(Log.ADD_ACTION,"新增一个进货单"));
 		resultMap.put("success", true);
+		return resultMap;
+	}
+	
+	/**
+	 * 根據用戶輸入的查詢條件獲取進貨單列表信息
+	 * @param puchaseList
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping("/list")
+	@RequiresPermissions(value="进货单据查询")
+	public Map<String, Object> list(PuchaseList puchaseList,@RequestParam(value="page",required=false)Integer page,@RequestParam(value="rows",required=false)Integer pageSize){
+		Map<String, Object> resultMap = new HashMap<>();
+		List<PuchaseList> puchaseLists = puchaseListService.list(puchaseList, page, pageSize, Direction.DESC, "puchaseDate");
+		Long count = puchaseListService.count(puchaseList);
+		resultMap.put("rows", puchaseLists);
+		resultMap.put("total", count);
 		return resultMap;
 	}
 }

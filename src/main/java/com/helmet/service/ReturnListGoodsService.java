@@ -14,4 +14,6 @@ public interface ReturnListGoodsService {
 	 * @return
 	 */
 	public String getTodayMaxReturnNumber();
+	
+	
 }

@@ -11,6 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.helmet.util.CustomDateTimeSerializer;
 
 
 /**
@@ -41,6 +45,13 @@ public class PuchaseList {
 	private float truePayMoney;     //实付金额
 	
 	private Integer state;    //交易状态    1、已付钱；   2、未付钱
+	
+	@Transient
+	private Date bPuchaseDate;  //搜索起始时间，不映射数据库
+	
+	
+	@Transient
+	private Date ePuchaseDate;  //搜索结束时间，不映射数据库
 	
 	@ManyToOne
 	@JoinColumn(name="userId")
@@ -73,6 +84,8 @@ public class PuchaseList {
 		this.supplier = supplier;
 	}
 
+	//使用自定义的日期格式，获取数据库中的date类型的数据，并转化为json中的时间格式
+	@JsonSerialize(using=CustomDateTimeSerializer.class)
 	public Date getPuchaseDate() {
 		return puchaseDate;
 	}
@@ -119,6 +132,22 @@ public class PuchaseList {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public Date getbPuchaseDate() {
+		return bPuchaseDate;
+	}
+
+	public void setbPuchaseDate(Date bPuchaseDate) {
+		this.bPuchaseDate = bPuchaseDate;
+	}
+
+	public Date getePuchaseDate() {
+		return ePuchaseDate;
+	}
+
+	public void setePuchaseDate(Date ePuchaseDate) {
+		this.ePuchaseDate = ePuchaseDate;
 	}
 
 	@Override
