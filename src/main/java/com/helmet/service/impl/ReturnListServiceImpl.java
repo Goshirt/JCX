@@ -3,8 +3,17 @@ package com.helmet.service.impl;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.helmet.entity.Goods;
@@ -15,6 +24,7 @@ import com.helmet.repository.GoodsTypeRepository;
 import com.helmet.repository.ReturnListGoodsRepository;
 import com.helmet.repository.ReturnListRepository;
 import com.helmet.service.ReturnListService;
+import com.helmet.util.StringUtil;
 
 /**
  * 退货单Service实现
@@ -68,6 +78,78 @@ public class ReturnListServiceImpl implements ReturnListService{
 			goodsRepository.save(goods);
 		}
 		returnListRepository.save(returnList);
+	}
+
+	@Override
+	public List<ReturnList> list(ReturnList returnList, Integer page, Integer pageSize, Direction direction,
+			String... propertis) {
+		Pageable pageable = new PageRequest(page-1,pageSize);
+		Page<ReturnList> pageReturnList = returnListRepository.findAll(new Specification<ReturnList>() {
+			
+			@Override
+			public Predicate toPredicate(Root<ReturnList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				Predicate predicate = cb.conjunction();
+				if (returnList != null) {
+					if (StringUtil.isNotEmpty(returnList.getReturnNumber())) {
+						predicate.getExpressions().add(cb.like(root.get("returnNumber"), "%"+returnList.getReturnNumber()+"%"));
+					}
+					if (returnList.getbReturnListDate() != null) {
+						predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("returnDate"), returnList.getbReturnListDate()));
+					}
+					if (returnList.geteReturnListDate() != null) {
+						predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("returnDate"), returnList.geteReturnListDate()));
+					}
+					if (returnList.getState() != null) {
+						predicate.getExpressions().add(cb.equal(root.get("state"), returnList.getState()));
+					}
+					if (returnList.getSupplier() != null && returnList.getSupplier().getSupplierId() != null) {
+						predicate.getExpressions().add(cb.equal(root.get("supplier").get("supplierId"), returnList.getSupplier().getSupplierId()));
+						
+					}
+				}
+				return predicate;
+			}
+		}, pageable);
+		return pageReturnList.getContent();
+	}
+
+	@Override
+	public Long count(ReturnList returnList) {
+		Long count = returnListRepository.count(new Specification<ReturnList>() {
+
+			@Override
+			public Predicate toPredicate(Root<ReturnList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				Predicate predicate = cb.conjunction();
+				if (returnList != null) {
+					if (StringUtil.isNotEmpty(returnList.getReturnNumber())) {
+						predicate.getExpressions().add(cb.like(root.get("returnNumber"), "%"+returnList.getReturnNumber()+"%"));
+					}
+					if (returnList.getbReturnListDate() != null) {
+						predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("returnDate"), returnList.getbReturnListDate()));
+					}
+					if (returnList.geteReturnListDate() != null) {
+						predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("returnDate"), returnList.geteReturnListDate()));
+					}
+					if (returnList.getState() != null) {
+						predicate.getExpressions().add(cb.equal(root.get("state"), returnList.getState()));
+					}
+					if (returnList.getSupplier() != null && returnList.getSupplier().getSupplierId() != null) {
+						predicate.getExpressions().add(cb.equal(root.get("supplier").get("supplierId"), returnList.getSupplier().getSupplierId()));
+						
+					}
+				}
+				return predicate;
+			}
+		});
+		return count;
+		
+	}
+
+	@Override
+	@Transactional
+	public void delete(Integer returnListId) {
+		returnListGoodsRepository.deleteByReturnListId(returnListId);
+		returnListRepository.delete(returnListId);
 	}
 
 

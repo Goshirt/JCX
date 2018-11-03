@@ -45,4 +45,10 @@ public interface PuchaseListService {
 	 * @return
 	 */
 	public Long count(PuchaseList puchaseList);
+	
+	/**
+	 * 根据进货单Id删除进货单
+	 * @param puchaseListId
+	 */
+	public void delete(Integer puchaseListId);
 }

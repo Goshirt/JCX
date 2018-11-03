@@ -25,6 +25,7 @@ import com.helmet.repository.PuchaseListGoodsRepository;
 import com.helmet.repository.PuchaseListRepository;
 import com.helmet.service.PuchaseListService;
 import com.helmet.util.MathUtil;
+import com.helmet.util.StringUtil;
 
 /**
  * 进货单Service实现
@@ -90,15 +91,20 @@ public class PuchaseListServiceImpl implements PuchaseListService{
 			public Predicate toPredicate(Root<PuchaseList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				Predicate predicate = cb.conjunction();
 				if (puchaseList != null) {
+					if (StringUtil.isNotEmpty(puchaseList.getPuchaseNumber())) {
+						predicate.getExpressions().add(cb.like(root.get("puchaseNumber"), "%"+puchaseList.getPuchaseNumber()+"%"));
+					}
+					if (puchaseList.getSupplier()!= null && puchaseList.getSupplier().getSupplierId() != null) {
+						predicate.getExpressions().add(cb.equal(root.get("supplier").get("supplierId"), puchaseList.getSupplier().getSupplierId()));
+					}
 					if (puchaseList.getbPuchaseDate() != null) {
-						predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("bPuchaseDate"), puchaseList.getbPuchaseDate()));
+						predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("puchaseDate"), puchaseList.getbPuchaseDate()));
 					}
 					if (puchaseList.getePuchaseDate() != null) {
-						predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("ePuchaseDate"), puchaseList.getePuchaseDate()));
+						predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("puchaseDate"), puchaseList.getePuchaseDate()));
 					}
-					if (puchaseList.getSupplier() != null) {
-						predicate.getExpressions().add(cb.like(root.get("supplier").get("name"), "%"+puchaseList.getSupplier().getName()+"%"));
-						
+					if (puchaseList.getState() != null) {
+						predicate.getExpressions().add(cb.equal(root.get("state"), puchaseList.getState()));
 					}
 				}
 				return predicate;
@@ -115,15 +121,20 @@ public class PuchaseListServiceImpl implements PuchaseListService{
 			public Predicate toPredicate(Root<PuchaseList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				Predicate predicate = cb.conjunction();
 				if (puchaseList != null) {
+					if (StringUtil.isNotEmpty(puchaseList.getPuchaseNumber())) {
+						predicate.getExpressions().add(cb.like(root.get("puchaseNumber"), "%"+puchaseList.getPuchaseNumber()+"%"));
+					}
+					if (puchaseList.getSupplier()!= null && puchaseList.getSupplier().getSupplierId() != null) {
+						predicate.getExpressions().add(cb.equal(root.get("supplier").get("supplierId"), puchaseList.getSupplier().getSupplierId()));
+					}
 					if (puchaseList.getbPuchaseDate() != null) {
-						predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("bPuchaseDate"), puchaseList.getbPuchaseDate()));
+						predicate.getExpressions().add(cb.greaterThanOrEqualTo(root.get("puchaseDate"), puchaseList.getbPuchaseDate()));
 					}
 					if (puchaseList.getePuchaseDate() != null) {
-						predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("ePuchaseDate"), puchaseList.getePuchaseDate()));
+						predicate.getExpressions().add(cb.lessThanOrEqualTo(root.get("puchaseDate"), puchaseList.getePuchaseDate()));
 					}
-					if (puchaseList.getSupplier() != null) {
-						predicate.getExpressions().add(cb.like(root.get("supplier"), "%"+puchaseList.getSupplier().getName()+"%"));
-						
+					if (puchaseList.getState() != null) {
+						predicate.getExpressions().add(cb.equal(root.get("state"), puchaseList.getState()));
 					}
 				}
 				return predicate;
@@ -132,5 +143,12 @@ public class PuchaseListServiceImpl implements PuchaseListService{
 		return count;
 	}
 
+	@Override
+	@Transactional
+	public void delete(Integer puchaseListId) {
+		puchaseListGoodsRepository.deleteByPuchaseListId(puchaseListId);
+		puchaseListRepository.delete(puchaseListId);
+	}
 
+	
 }

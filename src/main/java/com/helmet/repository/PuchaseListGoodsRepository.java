@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.helmet.entity.PuchaseListGoods;
@@ -23,4 +24,12 @@ public interface PuchaseListGoodsRepository extends JpaRepository<PuchaseListGoo
 	 */
 	@Query(value="SELECT * FROM t_puchase_list_goods WHERE puchase_list_id =?1",nativeQuery=true)
 	public List<PuchaseListGoods> getGoodsListByPuchaseListId(Integer puchaseListId);
+	
+	/**
+	 * 根据进货单id 删除该进货单中的商品
+	 * @param returnListId
+	 */
+	@Modifying
+	@Query(value="delete from t_puchase_list_goods where puchase_list_id=?1",nativeQuery=true)
+	public void deleteByPuchaseListId(Integer puchaseListId);
 }

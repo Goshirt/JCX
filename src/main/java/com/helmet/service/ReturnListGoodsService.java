@@ -1,5 +1,8 @@
 package com.helmet.service;
 
+import java.util.List;
+
+import com.helmet.entity.ReturnListGoods;
 
 /**
  * 
@@ -9,11 +12,16 @@ package com.helmet.service;
  */
 public interface ReturnListGoodsService {
 	
+	
 	/**
-	 * 获取当天最大的退货单号
+	 * 根据退货单Id获取退货单的所有商品
+	 * @param returnListId
 	 * @return
 	 */
-	public String getTodayMaxReturnNumber();
+	public List<ReturnListGoods> getReturnListGoodsByReturnId(Integer returnListId);
+	
+	
+	
 	
 	
 }

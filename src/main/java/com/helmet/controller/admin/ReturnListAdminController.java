@@ -11,9 +11,11 @@ import javax.annotation.Resource;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -76,8 +78,8 @@ public class ReturnListAdminController {
 	
 	/**
 	 * 保存退货单，退货单的商品，以及更新库存商品的，库存量
-	 * @param returnList
-	 * @param goodsJson
+	 * @param returnList  退货单的信息
+	 * @param returnGoodsToJson  退货单中的商品的json形式
 	 * @return
 	 */
 	@RequestMapping("/save")
@@ -93,8 +95,45 @@ public class ReturnListAdminController {
 		//通过Gson将json串转为ReturnListGoods的List集
 		List<ReturnListGoods> returnListGoodsList = gson.fromJson(returnGoodsToJson, new TypeToken<List<ReturnListGoods>>(){}.getType());
 		returnListService.save(returnList, returnListGoodsList);
-		logService.log(new Log(Log.ADD_ACTION,"新增一个退货单"));
+		logService.log(new Log(Log.ADD_ACTION,"新增一个退货单"+currentUser.getUserName()));
+		resultMap.put("success", true);
+		return resultMap;
+	}
+	
+	/**
+	 * 根據用戶輸入的查詢條件獲取退貨單列表信息
+	 * @param returnList
+	 * @param page
+	 * @param pageSize
+	 * @return
+	 */
+	@RequestMapping("/list")
+	@RequiresPermissions(value="退货单据查询")
+	public Map<String, Object> list(ReturnList returnList,@RequestParam(value="page",required=false)Integer page,@RequestParam(value="rows",required=false)Integer pageSize){
+		Map<String, Object> resultMap = new HashMap<>();
+		List<ReturnList> returnLists = returnListService.list(returnList, page, pageSize, Direction.DESC, "returnDate");
+		Long count = returnListService.count(returnList);
+		resultMap.put("rows", returnLists);
+		resultMap.put("total", count);
+		return resultMap;
+	}
+	
+	/**
+	 * 根据退货单Id,删除退货单
+	 * @param returnListId
+	 * @return
+	 */
+	@RequestMapping("/delete")
+	@RequiresPermissions(value="退货单据查询")
+	public Map<String, Object> delete(Integer returnListId){
+		Map<String, Object> resultMap = new HashMap<>();
+		returnListService.delete(returnListId);
+		//设置操作用户
+		User currentUser=userService.getUserByUserName((String)SecurityUtils.getSubject().getPrincipal());
+		logService.log(new Log(Log.DELETE_ACTION, "删除退货单"+currentUser.getUserName()));
 		resultMap.put("success", true);
 		return resultMap;
 	}
 }
+
+

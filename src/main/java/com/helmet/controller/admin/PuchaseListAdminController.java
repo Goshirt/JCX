@@ -117,4 +117,21 @@ public class PuchaseListAdminController {
 		resultMap.put("total", count);
 		return resultMap;
 	}
+	
+	/**
+	 * 根据id删除进货单
+	 * @param puchaseListId
+	 * @return
+	 */
+	@RequestMapping("/delete")
+	@RequiresPermissions(value="进货单据查询")
+	public Map<String, Object> delete(Integer puchaseListId) {
+		Map<String, Object> resultMap = new HashMap<>();
+		puchaseListService.delete(puchaseListId);
+		//设置操作用户
+		User currentUser=userService.getUserByUserName((String)SecurityUtils.getSubject().getPrincipal());
+		logService.log(new Log(Log.DELETE_ACTION, "删除进货单"+currentUser.getUserName()));
+		resultMap.put("success", true);
+		return resultMap;
+	}
 }

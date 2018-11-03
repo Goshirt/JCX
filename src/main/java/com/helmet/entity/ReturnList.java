@@ -11,6 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.helmet.util.CustomDateTimeSerializer;
 
 
 /**
@@ -39,6 +43,12 @@ public class ReturnList {
 	private float shouldPayMoney;    //应付金额
 	
 	private float truePayMoney;     //实付金额
+	
+	@Transient
+	private Date bReturnListDate;   //搜索用到，不映射到数据库
+	
+	@Transient
+	private Date eReturnListDate;   //搜素用到，不映射到数据库
 	
 	private Integer state;    //交易状态    1、已付钱；   2、未付钱
 	
@@ -73,6 +83,7 @@ public class ReturnList {
 		this.supplier = supplier;
 	}
 
+	@JsonSerialize(using=CustomDateTimeSerializer.class)
 	public Date getReturnDate() {
 		return returnDate;
 	}
@@ -119,6 +130,24 @@ public class ReturnList {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	
+	
+	public Date getbReturnListDate() {
+		return bReturnListDate;
+	}
+
+	public void setbReturnListDate(Date bReturnListDate) {
+		this.bReturnListDate = bReturnListDate;
+	}
+
+	public Date geteReturnListDate() {
+		return eReturnListDate;
+	}
+
+	public void seteReturnListDate(Date eReturnListDate) {
+		this.eReturnListDate = eReturnListDate;
 	}
 
 	@Override

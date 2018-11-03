@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>进货单据查询</title>
+<title>退货单据查询</title>
 <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
 <link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
 <script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
@@ -20,9 +20,9 @@
 	
 	function formatterState(val,row){
 		if (val == 1) {
-			return "<font color='red'>已付钱</font>"
+			return "<font color='red'>已退钱</font>"
 		}else if (val ==2) {
-			return "<font color='red'>未付钱</font>"
+			return "<font color='red'>未退钱</font>"
 		}
 	}
 	
@@ -36,58 +36,56 @@
 	
 	
 	
-	//搜索进货单
-	function searchPychcaseList(){
+	//搜索退货单
+	function searchReturnList(){
 		$("#dg2").datagrid("loadData",{total:0,rows:[]});
 		if(isNaN($("#s_supplier").combobox("getValue"))){
-			supplierId="";
+				supplierId="";
 		}else{
 			supplierId=$("#s_supplier").combobox("getValue");
 		}
 		$("#dg").datagrid({
-			url:'/admin/puchaseList/list',
+			url:'/admin/returnList/list',
 			queryParams:{
 				puchaseNumber:$("#s_purchaseNumber").val(),
 				"supplier.supplierId":supplierId,
 				state:$("#s_state").combobox("getValue"),
-				bPuchaseDate:$("#s_bPuchaseDate").datebox("getValue"),
-				ePuchaseDate:$("#s_ePuchaseDate").datebox("getValue")
+				bReturnListDate:$("#s_bReturnListDate").datebox("getValue"),
+				eReturnListDate:$("#s_eReturnListDate").datebox("getValue")
 			}
 		});
 	}
 	
-	function deletePurchaseList(){
+	 function deleteReturnList(){
 		var selectRows = $("#dg").datagrid("getSelections");
 		if (selectRows.length!=1) {
-			$.messager.alert("系统提示","请选择需要删除的进货单");
+			$.messager.alert("系统提示","请选择需要删除的退货单");
 			return;
 		}
 		var row=selectRows[0];
 		if (row.state == 2) {
-			$.messager.alert("系统提示","该进货单没有给钱，不能删除");
+			$.messager.alert("系统提示","该退货单没有退还钱款，不能删除");
 			return;
 		}
-		$.messager.confirm("系统提示", "删除后无法还原，您确定删除选中的进货单吗?", function(r){
+		$.messager.confirm("系统提示", "删除后无法还原，您确定删除选中的退货单吗?", function(r){
 			if (r) {
-				$.post("/admin/puchaseList/delete",{puchaseListId:row.puchaseListId},function(result){
+				$.post("/admin/returnList/delete",{returnListId:row.returnListId},function(result){
 					if (result.success) {
 						$("#dg").datagrid("reload");
 						$("#dg2").datagrid("reload");						
 					}else{
-						$.messager.alert("系统提示", "进货单删除失败，请联系管理员");
+						$.messager.alert("系统提示", "退货单删除失败，请联系管理员");
 					}
 				},"json");
 			}
 		});
-	}
+	} 
 	
 	$(document).ready(function(){
-		$("#s_bPuchaseDate").datebox("setValue",genLastMonthDayStr()); // 设置上个月日期
-		$("#s_ePuchaseDate").datebox("setValue",genTodayStr()); // 设置当前日期
 		$("#dg").datagrid({
 			onClickRow:function(index,row){
 				$("#dg2").datagrid("load",{
-					"puchaseListId":row.puchaseListId
+					"returnListId":row.returnListId
 				})
 				
 			}
@@ -101,13 +99,13 @@
 <body class="easyui-layout" style="margin: 2px;">
 	<div data-options="region:'north'" style="height: 300px;padding: 5px;border: 1px;padding-top: 2px;">
 		<table id="dg" class="easyui-datagrid"  pagination="true" style="height：100%" fitColumns="true" fit="true" singleSelect="true"
-				rowNumbers="true" toolbar="#tb" title="进货单列表" url="/admin/puchaseList/list">
+				rowNumbers="true" toolbar="#tb" title="退货单列表" url="/admin/returnList/list">
 			<thead>
-					<th field="puchaseNumber" width="80" align="center">进货单号</th>
+					<th field="returnNumber" width="80" align="center">退货单号</th>
 					<th field="supplier" width="150" align="center" formatter="formatterSupplier">供应商</th>
-					<th field="puchaseDate" width="100" align="center">进货日期</th>
-					<th field="shouldPayMoney" width="50" align="center" formatter="formatterToPrice">应付金额</th>
-					<th field="truePayMoney" width="50" align="center"formatter="formatterToPrice">实付金额</th>
+					<th field="returnDate" width="100" align="center">退货日期</th>
+					<th field="shouldPayMoney" width="50" align="center" formatter="formatterToPrice">应退金额</th>
+					<th field="truePayMoney" width="50" align="center"formatter="formatterToPrice">实退金额</th>
 					<th field="state" width="50" align="center" formatter="formatterState">状态</th>
 					<th field="user" width="80" align="center" formatter="formatterUser">操作用户</th>
 					<th field="remark" width="150" align="center">备注</th>
@@ -118,32 +116,33 @@
 		<div style="padding: 4px;">
 			<fieldset style="border-color: #E7F0FF">
 				<legend>查询条件</legend>
-				&nbsp;退货单号:&nbsp;<input type="text" id="s_purchaseNumber" size="15" onkeydown="if(event.keyCode==13) searchGoods()"/>
+				&nbsp;退货单号:&nbsp;<input type="text" id="s_returnNumber" size="15" onkeydown="if(event.keyCode==13) searchGoods()"/>
 				&nbsp;供应商名称：&nbsp;<input class="easyui-combobox" id="s_supplier" name="supplier.supplierId" style="width: 200px;" required="true"
 										data-options="required:true,panelHeight:'auto',valueField:'supplierId',textField:'name',url:'/admin/supplier/comboboxList'" />
-				&nbsp;&nbsp;操作时间：&nbsp;<input id="s_bPuchaseDate" class="easyui-datetimebox" editable="false" style="width: 150px;"/>
-				&nbsp;--&nbsp;<input id="s_ePuchaseDate" class="easyui-datetimebox" editable="false" style="width: 150px;"/>
+				&nbsp;&nbsp;操作时间：&nbsp;<input id="s_bReturnListDate" class="easyui-datetimebox" editable="false" style="width: 150px;"/>
+				&nbsp;--&nbsp;<input id="s_eReturnListDate" class="easyui-datetimebox" editable="false" style="width: 150px;"/>
 				&nbsp;状态：<select class="easyui-combobox" id="s_state" style="width: 80px" editable="false" panelHeight="auto">
 								<option value="">全部</option>
-								<option value="1">已付</option>
-								<option value="2">未付</option>
+								<option value="1">已退钱</option>
+								<option value="2">未退钱</option>
 							</select>
 				&nbsp;&nbsp;
-					<a href="javascript:searchPychcaseList()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
-					<a href="javascript:deletePurchaseList()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+				<a href="javascript:searchReturnList()" class="easyui-linkbutton" iconCls="icon-search" plain="true">搜索</a>
+				<a href="javascript:deleteReturnList()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
 			</fieldset>
 		</div>
 	</div>
-	<!-- 进货单的商品列表 -->
+	<!-- 退货单的商品列表 -->
 	<div region="center" style="padding: 10px;border: 1px;margin-top: 5px;">
 		<table id="dg2" class="easyui-datagrid"  pagination="true" style="height：100%" fitColumns="true" fit="true" singleSelect="true"
-				rowNumbers="true" url="/admin/puchaseListGoods/list" title="进货单商品列表">
+				rowNumbers="true" url="/admin/returnListGoods/list" title="退货单商品列表">
 			<thead>
 					<th field="code" width="30" align="center">商品编码</th>
 					<th field="name" width="150" align="center">商品名称</th>
 					<th field="model" width="50" align="center">型号</th>
 					<th field="unit" width="50" align="center">单位</th>
 					<th field="num" width="50" align="center">数量</th>
+					
 					<th field="price" width="50" align="center">单价(¥)</th>
 					<th field="total" width="50" align="right">总金额(¥)</th>
 			</thead>

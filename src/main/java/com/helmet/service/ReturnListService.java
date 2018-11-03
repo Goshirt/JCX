@@ -2,6 +2,8 @@ package com.helmet.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort.Direction;
+
 import com.helmet.entity.ReturnList;
 import com.helmet.entity.ReturnListGoods;
 
@@ -25,4 +27,28 @@ public interface ReturnListService {
 	 * @param returnListGoodsList
 	 */
 	public void save(ReturnList returnList,List<ReturnListGoods> returnListGoodsList);
+	
+	/**
+	 * 根据进货单信息分页查询获取进货单列表,如果条件为空，则查找出所有的退货单
+	 * @param returnList
+	 * @param page
+	 * @param pageSize
+	 * @param direction
+	 * @param propertis
+	 * @return
+	 */
+	public List<ReturnList> list(ReturnList returnList,Integer page,Integer pageSize,Direction direction,String...propertis);
+	
+	/**
+	 * 根据进货单信息查询总数
+	 * @param returnList
+	 * @return
+	 */
+	public Long count(ReturnList returnList);
+	
+	/**
+	 * 根据退货单Id
+	 * @param returnListId
+	 */
+	public void delete(Integer returnListId);
 }

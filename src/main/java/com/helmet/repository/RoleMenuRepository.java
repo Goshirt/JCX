@@ -13,6 +13,7 @@ public interface RoleMenuRepository extends JpaRepository<RoleMenu, Integer>,Jpa
 	
 	/**
 	 * 根据roleId删除角色菜单关联关系
+	 * @Modifying 使用jpa自定义的update 或者 delete操作时，需要添加该注解
 	 * @param roleId
 	 */
 	@Query(value="delete from t_role_menu where role_id=?1",nativeQuery=true)
