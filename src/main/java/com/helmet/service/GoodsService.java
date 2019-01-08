@@ -100,4 +100,28 @@ public interface GoodsService {
 	 * @return
 	 */
 	public Long countGoodsListWithHaveInventoryQuantity(String codeOrName);
+	
+	/**
+	 * 根据条件分页获取获取当前库存的商品列表
+	 * @param goods
+	 * @param page
+	 * @param pageSize
+	 * @param direction
+	 * @param properties
+	 * @return
+	 */
+	public List<Goods> getInventoryGoodsList(Goods goods,Integer page,Integer pageSize,Direction direction,String...properties);
+	
+	/**
+	 * 根据条件统计当前库存商品的总数
+	 * @param goods
+	 * @return
+	 */
+	public Long countInventoryGoodsList(Goods goods);
+	
+	/**
+	 * 获取库存报警的商品
+	 * @return
+	 */
+	public List<Goods> getAlarmGoods();
 }

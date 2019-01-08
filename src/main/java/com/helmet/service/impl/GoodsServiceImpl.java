@@ -33,7 +33,6 @@ public class GoodsServiceImpl implements GoodsService{
 	@Resource
 	private GoodsRepository goodsRepository;
 	
-	
 	@Override
 	public boolean isGoodsTypeHaveGoods(Integer goodsTypeId) {
 		Long count=goodsRepository.countGoodsByGoodsTypeId(goodsTypeId);
@@ -202,6 +201,58 @@ public class GoodsServiceImpl implements GoodsService{
 			}
 		});
 		return count;
+	}
+
+
+	@Override
+	public List<Goods> getInventoryGoodsList(Goods goods, Integer page, Integer pageSize, Direction direction,
+			String... properties) {
+		Pageable pageable = new PageRequest(page-1, pageSize);
+		Page<Goods> pageGoods = goodsRepository.findAll(new Specification<Goods>() {
+			@Override
+			public Predicate toPredicate(Root<Goods> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				Predicate predicate = cb.conjunction();
+				if (goods != null) {
+					if(goods.getGoodsType()!=null && goods.getGoodsType().getGoodsTypeId()!=null && goods.getGoodsType().getGoodsTypeId()!=1){
+						predicate.getExpressions().add(cb.equal(root.get("goodsType").get("goodsTypeId"), goods.getGoodsType().getGoodsTypeId()));
+					}
+					if (StringUtil.isNotEmpty(goods.getCodeOrName())) {
+						predicate.getExpressions().add(cb.or(cb.like(root.get("code"), "%"+goods.getCodeOrName()+"%"), cb.like(root.get("name"), "%"+goods.getCodeOrName()+"%")));
+					}
+				}
+				return predicate;
+			}
+		}, pageable);
+		return pageGoods.getContent();
+				
+	}
+
+
+	@Override
+	public Long countInventoryGoodsList(Goods goods) {
+		Long count = goodsRepository.count(new Specification<Goods>() {
+
+			@Override
+			public Predicate toPredicate(Root<Goods> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				Predicate predicate = cb.conjunction();
+				if (goods != null) {
+					if(goods.getGoodsType()!=null && goods.getGoodsType().getGoodsTypeId()!=null && goods.getGoodsType().getGoodsTypeId()!=1){
+						predicate.getExpressions().add(cb.equal(root.get("goodsType").get("goodsTypeId"), goods.getGoodsType().getGoodsTypeId()));
+					}
+					if (StringUtil.isNotEmpty(goods.getCodeOrName())) {
+						predicate.getExpressions().add(cb.or(cb.like(root.get("code"), "%"+goods.getCodeOrName()+"%"), cb.like(root.get("name"), "%"+goods.getCodeOrName()+"%")));
+					}
+				}
+				return predicate;
+			}
+		});
+		return count;
+	}
+
+
+	@Override
+	public List<Goods> getAlarmGoods() {
+		return goodsRepository.getAlarmGoods();
 	}
 
 }

@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.helmet.entity.Goods;
 import com.helmet.entity.Log;
+import com.helmet.service.CustomerReturnListGoodsService;
 import com.helmet.service.GoodsService;
 import com.helmet.service.LogService;
+import com.helmet.service.SaleListGoodsService;
 import com.helmet.util.StringUtil;
 
 /**
@@ -34,6 +36,12 @@ public class GoodsAdminController {
 	
 	@Resource
 	private LogService logService;
+	
+	@Resource
+	private SaleListGoodsService saleListGoodsService;
+	
+	@Resource
+	private CustomerReturnListGoodsService customerReturnListGoodsService;
 	/**
 	 * 获取商品集
 	 * @param goods 查询条件
@@ -152,7 +160,7 @@ public class GoodsAdminController {
 	
 	
 	/**
-	 * 根据商品码或者商品名字获分页获取库存大于0（inventoryQuantity>0）/已入库的商品
+	 * 根据商品码或者商品名字分页获取库存大于0（inventoryQuantity>0）/已入库的商品
 	 * @param codeOrName
 	 * @param page
 	 * @param pageSize
@@ -225,4 +233,43 @@ public class GoodsAdminController {
 		}
 		return resultMap;
 	}
+	
+	/**
+	 * 根据条件查询当前的库存
+	 * @param goods
+	 * @param page
+	 * @param pageSize
+	 * @param direction
+	 * @param properties
+	 * @return
+	 */
+	@RequestMapping("/getInventoryNum")
+	@ResponseBody
+	@RequiresPermissions(value="当前库存查询")
+	public Map<String, Object> getInventoryNum(Goods goods , @RequestParam(value="page",required=false)Integer page, @RequestParam(value="rows",required=false)Integer pageSize,Direction direction, String... properties ) throws Exception{
+		Map<String, Object> resultMap = new HashMap<>();
+		List<Goods> goodsList = goodsService.getInventoryGoodsList(goods, page, pageSize, Direction.DESC, "goodsId");
+		for (Goods gd : goodsList) {
+			gd.setSaleTotalNum(saleListGoodsService.getSaleTotalNum(gd.getGoodsId())-customerReturnListGoodsService.getReturnTotalNum(gd.getGoodsId()));
+		}
+		long total = goodsService.countInventoryGoodsList(goods);
+		resultMap.put("rows", goodsList);
+		resultMap.put("total", total);
+		return resultMap;
+	}
+	/**
+	 * 查询库存报警商品
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/getAlarmGoods")
+	@ResponseBody
+	@RequiresPermissions(value="库存报警")
+	public Map<String, Object> getAlarmGoods() throws Exception{
+		Map<String, Object> resultMap = new HashMap<>();
+		List<Goods> goodsList = goodsService.getAlarmGoods();
+		resultMap.put("rows", goodsList);
+		return resultMap;
+	}
+	
 }

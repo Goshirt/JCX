@@ -93,4 +93,11 @@ public class CustomerServiceImpl implements CustomerService{
 		return customerRepository.getOne(customerId);
 	}
 
+
+
+	@Override
+	public List<Customer> getCustomerByName(String name) {
+		return customerRepository.getCustomerByName(name);
+	}
+
 }

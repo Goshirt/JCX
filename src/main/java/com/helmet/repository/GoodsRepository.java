@@ -1,5 +1,7 @@
 package com.helmet.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -29,4 +31,11 @@ public interface GoodsRepository extends JpaRepository<Goods, Integer> ,JpaSpeci
 	 */
 	@Query(value="SELECT MAX(CODE) FROM t_goods",nativeQuery=true)
 	public String getMaxCode();
+	
+	/**
+	 * 获取库存报警的商品
+	 * @return
+	 */
+	@Query(value="SELECT * FROM t_goods g ,t_goods_type t WHERE  g.inventory_quantity < g.min_num AND g.goods_type_id = t.goods_type_id ORDER BY t.name",nativeQuery=true)
+	public List<Goods> getAlarmGoods();
 }

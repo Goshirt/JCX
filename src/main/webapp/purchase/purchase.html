@@ -42,6 +42,7 @@
 				$("#num").numberbox("setValue",row.num);
 				//修改操作
 				$("#action").val("modify");
+				$("#rowIndex").val($("#dg").datagrid("getRowIndex",row));
 			}
 		});
 		$("#dg2").datagrid({
@@ -117,7 +118,7 @@
 		});
 	}
 	
-	//添加商品到进货单
+	//打开添加商品到进货单窗口
 	function openPurchaseListGoodsAddDialog(){
 		$("#dlg").dialog("open").dialog("setTitle","添加商品到该进货单");
 		$("#tree").tree({
@@ -142,7 +143,7 @@
 		});
 	}
 	
-	//添加商品到进货单
+	//打开添加商品的具体信息对话框
 	function openGoodsChooseDialog(){
 		$("#saveAddAddNextButton").show();
 		var select=$("#dg2").datagrid("getSelections");
@@ -175,6 +176,7 @@
 		$("#num").numberbox("setValue",row.num);
 		//修改操作
 		$("#action").val("modify");
+		$("#rowIndex").val($("#dg").datagrid("getRowIndex",row));
 	}
 	
 	//把商品移出进货单
@@ -226,23 +228,27 @@
 				lastPurchasingPrice:row.lastPurchasingPrice
 			});
 		}else if ("modify"==action) {
+			var rowIndex = $("#rowIndex").val();
 			var select=$("#dg").datagrid("getSelections");
 			var row=select[0];
 			var num=$("#num").numberbox("getValue");
 			var price=$("#price").numberbox("getValue");
 			var total=num*price;
 			$("#dg").datagrid("updateRow",{
-				code:row.code,
-				name:row.name,
-				model:row.model,
-				unit:row.unit,
-				price:price,
-				num:num,
-				total:total,
-				goodsTypeId:row.goodsTypeId,//修改的时候，row已经保存有goodsTypeId,row.goodsType.goodsTypeId会报错
-				goodsId:row.goodsId,
-				inventoryQuantity:row.inventoryQuantity,
-				lastPurchasingPrice:row.lastPurchasingPrice
+				index:rowIndex,
+				row:{
+					code:row.code,
+					name:row.name,
+					model:row.model,
+					unit:row.unit,
+					price:price,
+					num:num,
+					total:total,
+					goodsTypeId:row.goodsTypeId,//修改的时候，row已经保存有goodsTypeId,row.goodsType.goodsTypeId会报错
+					goodsId:row.goodsId,
+					inventoryQuantity:row.inventoryQuantity,
+					lastPurchasingPrice:row.lastPurchasingPrice
+				}
 			})
 		}
 		setPuchaseListTotalPay();
@@ -443,6 +449,7 @@
 	     				<td>商&nbsp;品&nbsp;码:</td>
 	     				<td><input type="text" id="code" name="code" readonly="readonly" size="13">
 	     					<input type="text" id="action" hidden="true">
+	     					<input type="text" id="rowIndex" hidden="true">
 	     				</td>
 	     				<td>商品名称:</td>
 	     				<td><input type="text" id="name" name="name" readonly="readonly" size="13"></td>

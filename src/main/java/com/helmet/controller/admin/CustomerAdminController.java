@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.helmet.entity.Log;
 import com.helmet.entity.Customer;
 import com.helmet.service.LogService;
+import com.helmet.util.StringUtil;
 import com.helmet.service.CustomerService;
 
 /**
@@ -93,4 +94,22 @@ public class CustomerAdminController {
 		resultMap.put("success", true);
 		return resultMap;
 	}
+	
+	/**
+	 * 获取进货入库combobox下拉框的数据
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+	@RequestMapping("/comboboxList")
+	@RequiresPermissions(value="销售出库")
+	public List<Customer> comboboxList(String name)throws Exception{
+		if (StringUtil.isEmpty(name)) {
+			name="";
+		}
+		return customerService.getCustomerByName("%"+name+"%");
+	}
+	
+	
 }

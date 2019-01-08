@@ -60,6 +60,9 @@ public class Goods {
 	@Transient
 	private String codeOrName;  //商品码或者商品名称，不映射到数据库，只为了方便封装，查询
 	
+	@Transient
+	private Integer saleTotalNum;  //商品的销售总数
+	
 	@ManyToOne
 	@JoinColumn(name="goodsTypeId")
 	private GoodsType goodsType; //物品类别
@@ -183,6 +186,16 @@ public class Goods {
 
 	public void setCodeOrName(String codeOrName) {
 		this.codeOrName = codeOrName;
+	}
+	
+	
+
+	public Integer getSaleTotalNum() {
+		return saleTotalNum;
+	}
+
+	public void setSaleTotalNum(Integer saleTotalNum) {
+		this.saleTotalNum = saleTotalNum;
 	}
 
 	@Override

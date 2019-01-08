@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>销售入库</title>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/default/easyui.css"></link>
+<link rel="stylesheet" type="text/css" href="/static/jquery-easyui-1.3.3/themes/icon.css"></link>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/static/js/date.js"></script>
+<script type="text/javascript">
+	
+	var url;
+	
+	//格式为带￥符合的价格显示
+	function formatterToPrice(val,row){
+		return "¥"+val;
+	}
+	function formatterToTypeName(val,row){
+		 return row.goodsType.name;
+	}
+	
+	function formatterAddRed(val,row){
+		return "<font color='red'>"+val+"</font>";
+	}
+	
+</script>
+</head>
+<body class="easyui-layout" style="margin: 2px;">
+	
+	<!-- 报溢单的商品列表 -->
+	<div region="center" style="padding: 2px;border: 1px;">
+		<table id="dg" class="easyui-datagrid" style="height：1200px" fitColumns="true" fit="true" url="/admin/goods/getAlarmGoods" 
+				rowNumbers="true" title="库存报警商品列表">
+			<thead>
+					<th field="code" width="30" align="center">商品编码</th>
+					<th field="name" width="150" align="center">商品名称</th>
+					<th field="model" width="40" align="center">型号</th>
+					<th field="producer" width="80" align="center">供应商</th>
+					<th field="inventoryQuantity" width="30" align="center">当前库存量</th>
+					<th field="minNum" width="30" align="center" formatter="formatterAddRed">报警线</th>
+					<th field="lastPuchasingPrice" width="40" align="center" formatter="formatterToPrice">上次进货价(¥)</th>
+					<th field="total" width="50" align="center" formatter="formatterToTypeName">商品类别</th>
+			</thead>
+		</table>
+	</div>
+	
+</body>
+</html>

@@ -53,5 +53,12 @@ public interface CustomerService {
 	 * @return
 	 */
 	public Customer getCustomerById(int customerId);
+	
+	/**
+	 * 根据客户名获取客户列表
+	 * @param name
+	 * @return
+	 */
+	public List<Customer> getCustomerByName(String name);
 
 }
