@@ -99,8 +99,8 @@
 </script>
 </head>
 <body class="easyui-layout" style="margin: 2px;">
-	<div data-options="region:'north'" style="height: 300px;padding: 5px;border: 1px;padding-top: 2px;">
-		<table id="dg" class="easyui-datagrid"  pagination="true" style="height：100%" fitColumns="true" fit="true" singleSelect="true"
+	<div data-options="region:'north'" style="height: 300px;padding: 2px;border: 1px;padding-top: 2px;">
+		<table id="dg" class="easyui-datagrid" style="height：100%" fitColumns="true" fit="true" singleSelect="true"
 				rowNumbers="true" toolbar="#tb" title="销售单列表" url="/admin/saleList/list">
 			<thead>
 					<th field="saleNumber" width="80" align="center">销售单号</th>
@@ -115,7 +115,7 @@
 		</table>
 	</div>
 	<div id="tb">
-		<div style="padding: 4px;">
+		<div style="padding: 2px;">
 			<fieldset style="border-color: #E7F0FF">
 				<legend>查询条件</legend>
 				&nbsp;销售单号:&nbsp;<input type="text" id="s_purchaseNumber" size="15" onkeydown="if(event.keyCode==13) searchGoods()"/>
@@ -135,7 +135,7 @@
 		</div>
 	</div>
 	<!-- 销售单的商品列表 -->
-	<div region="center" style="padding: 2px;border: 1px;margin-top: 5px;">
+	<div region="center" style="padding: 2px;border: 1px;margin-top: 2px;">
 		<table id="dg2" class="easyui-datagrid"  pagination="true" style="height：100%" fitColumns="true" fit="true" singleSelect="true"
 				rowNumbers="true" url="/admin/saleListGoods/list" title="销售单商品列表">
 			<thead>

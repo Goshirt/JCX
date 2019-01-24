@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -108,10 +107,10 @@ public class PuchaseListAdminController {
 	 * @return
 	 */
 	@RequestMapping("/list")
-	@RequiresPermissions(value="进货单据查询")
-	public Map<String, Object> list(PuchaseList puchaseList,@RequestParam(value="page",required=false)Integer page,@RequestParam(value="rows",required=false)Integer pageSize){
+	@RequiresPermissions(value={"进货单据查询","供应商统计"})
+	public Map<String, Object> list(PuchaseList puchaseList){
 		Map<String, Object> resultMap = new HashMap<>();
-		List<PuchaseList> puchaseLists = puchaseListService.list(puchaseList, page, pageSize, Direction.DESC, "puchaseDate");
+		List<PuchaseList> puchaseLists = puchaseListService.list(puchaseList, Direction.DESC, "puchaseDate");
 		Long count = puchaseListService.count(puchaseList);
 		resultMap.put("rows", puchaseLists);
 		resultMap.put("total", count);
@@ -131,6 +130,23 @@ public class PuchaseListAdminController {
 		//设置操作用户
 		User currentUser=userService.getUserByUserName((String)SecurityUtils.getSubject().getPrincipal());
 		logService.log(new Log(Log.DELETE_ACTION, "删除进货单"+currentUser.getUserName()));
+		resultMap.put("success", true);
+		return resultMap;
+	}
+	
+	/**
+	 * 更新进货单付款状态
+	 * @param puchaseListId
+	 * @return
+	 */
+	@RequestMapping("/modifyState")
+	@RequiresPermissions(value="供应商统计")
+	public Map<String, Object> modifyState(Integer puchaseListId){
+		Map<String, Object> resultMap = new HashMap<>();
+		puchaseListService.updateState(puchaseListId);
+		//设置操作用户
+		User currentUser=userService.getUserByUserName((String)SecurityUtils.getSubject().getPrincipal());
+		logService.log(new Log(Log.UPDATE_ACTION, "更新售货单的付款状态为已付:"+puchaseListId+":"+currentUser.getUserName()));
 		resultMap.put("success", true);
 		return resultMap;
 	}

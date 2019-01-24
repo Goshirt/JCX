@@ -37,7 +37,7 @@ public interface CustomerReturnListService {
 	 * @param propertis
 	 * @return
 	 */
-	public List<CustomerReturnList> list(CustomerReturnList customerReturnList,Integer page,Integer pageSize,Direction direction,String...propertis);
+	public List<CustomerReturnList> list(CustomerReturnList customerReturnList,Direction direction,String...propertis);
 	
 	/**
 	 * 根据客户退货单信息查询总数
@@ -51,4 +51,10 @@ public interface CustomerReturnListService {
 	 * @param customerReturnListId
 	 */
 	public void delete(Integer customerReturnListId);
+	
+	/**
+	 * 更新客户退货单的付款状态为已付
+	 * @param puchaseListId
+	 */
+	public void updateState(Integer customerReturnListId);
 }

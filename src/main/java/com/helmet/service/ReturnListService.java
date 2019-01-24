@@ -37,7 +37,7 @@ public interface ReturnListService {
 	 * @param propertis
 	 * @return
 	 */
-	public List<ReturnList> list(ReturnList returnList,Integer page,Integer pageSize,Direction direction,String...propertis);
+	public List<ReturnList> list(ReturnList returnList,Direction direction,String...propertis);
 	
 	/**
 	 * 根据进货单信息查询总数
@@ -51,4 +51,10 @@ public interface ReturnListService {
 	 * @param returnListId
 	 */
 	public void delete(Integer returnListId);
+	
+	/**
+	 * 更新退货单的付款状态为已付
+	 * @param returnListId
+	 */
+	public void updateState(Integer returnListId);
 }

@@ -12,8 +12,16 @@ function genLastYearStr(){
 
 function genLastMonthDayStr(){
 	var date = new Date();
-	var month=(date.getMonth()+1-1)<10?"0"+(date.getMonth()+1-1):(date.getMonth()+1-1);
-	return date.getFullYear()+"-"+formatZero(month)+"-"+formatZero(date.getDate());
+	var month;
+	var year;
+	if (date.getMonth() == 0) {
+		month=12;
+		year = date.getFullYear()-1;
+	}else {
+		month=(date.getMonth())<10?"0"+(date.getMonth()):(date.getMonth());
+		year = date.getFullYear();
+	}
+	return year+"-"+formatZero(month)+"-"+formatZero(date.getDate());
 }
 
 function genLastWeekDayStr(){

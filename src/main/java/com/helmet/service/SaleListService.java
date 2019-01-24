@@ -37,7 +37,7 @@ public interface SaleListService {
 	 * @param propertis
 	 * @return
 	 */
-	public List<SaleList> list(SaleList saleList,Integer page,Integer pageSize,Direction direction,String...propertis);
+	public List<SaleList> list(SaleList saleList,Direction direction,String...propertis);
 	
 	/**
 	 * 根据销售单信息查询总数
@@ -51,4 +51,10 @@ public interface SaleListService {
 	 * @param saleListId
 	 */
 	public void delete(Integer saleListId);
+	
+	/**
+	 * 更新销售单的付款状态为已付
+	 * @param saleListId
+	 */
+	public void updateState(Integer saleListId);
 }

@@ -9,9 +9,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -81,10 +78,8 @@ public class CustomerReturnListServiceImpl implements CustomerReturnListService{
 	}
 
 	@Override
-	public List<CustomerReturnList> list(CustomerReturnList customerReturnList, Integer page, Integer pageSize, Direction direction,
-			String... propertis) {
-		Pageable pageable = new PageRequest(page-1, pageSize);
-		Page<CustomerReturnList> pageCustomerReturnList = customerReturnListRepository.findAll(new Specification<CustomerReturnList>() {
+	public List<CustomerReturnList> list(CustomerReturnList customerReturnList, Direction direction,String... propertis) {
+		List<CustomerReturnList> pageCustomerReturnList = customerReturnListRepository.findAll(new Specification<CustomerReturnList>() {
 			
 			@Override
 			public Predicate toPredicate(Root<CustomerReturnList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -108,8 +103,8 @@ public class CustomerReturnListServiceImpl implements CustomerReturnListService{
 				}
 				return predicate;
 			}
-		}, pageable);
-		return pageCustomerReturnList.getContent();
+		});
+		return pageCustomerReturnList;
 	}
 
 	@Override
@@ -147,6 +142,12 @@ public class CustomerReturnListServiceImpl implements CustomerReturnListService{
 	public void delete(Integer customerReturnListId) {
 		customerReturnListGoodsRepository.deleteByCustomerReturnListId(customerReturnListId);
 		customerReturnListRepository.delete(customerReturnListId);
+	}
+
+	@Override
+	@Transactional
+	public void updateState(Integer customerReturnListId) {
+		customerReturnListRepository.updateState(customerReturnListId);
 	}
 
 	

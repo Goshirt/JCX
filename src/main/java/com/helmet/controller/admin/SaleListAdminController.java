@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -108,10 +107,10 @@ public class SaleListAdminController {
 	 * @return
 	 */
 	@RequestMapping("/list")
-	@RequiresPermissions(value="销售单据查询")
-	public Map<String, Object> list(SaleList saleList,@RequestParam(value="page",required=false)Integer page,@RequestParam(value="rows",required=false)Integer pageSize){
+	@RequiresPermissions(value={"销售单据查询","客户统计"})
+	public Map<String, Object> list(SaleList saleList){
 		Map<String, Object> resultMap = new HashMap<>();
-		List<SaleList> saleLists = saleListService.list(saleList, page, pageSize, Direction.DESC, "saleDate");
+		List<SaleList> saleLists = saleListService.list(saleList,Direction.DESC, "saleDate");
 		Long count = saleListService.count(saleList);
 		resultMap.put("rows", saleLists);
 		resultMap.put("total", count);
@@ -131,6 +130,23 @@ public class SaleListAdminController {
 		//设置操作用户
 		User currentUser=userService.getUserByUserName((String)SecurityUtils.getSubject().getPrincipal());
 		logService.log(new Log(Log.DELETE_ACTION, "删除销售单"+currentUser.getUserName()));
+		resultMap.put("success", true);
+		return resultMap;
+	}
+	
+	/**
+	 * 更新客户退货单付款状态
+	 * @param saleListId
+	 * @return
+	 */
+	@RequestMapping("/modifyState")
+	@RequiresPermissions(value="客户统计")
+	public Map<String, Object> modifyState(Integer saleListId){
+		Map<String, Object> resultMap = new HashMap<>();
+		saleListService.updateState(saleListId);
+		//设置操作用户
+		User currentUser=userService.getUserByUserName((String)SecurityUtils.getSubject().getPrincipal());
+		logService.log(new Log(Log.UPDATE_ACTION, "更新售货单的付款状态为已付:"+saleListId+":"+currentUser.getUserName()));
 		resultMap.put("success", true);
 		return resultMap;
 	}

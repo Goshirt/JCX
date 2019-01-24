@@ -9,9 +9,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -81,10 +78,9 @@ public class ReturnListServiceImpl implements ReturnListService{
 	}
 
 	@Override
-	public List<ReturnList> list(ReturnList returnList, Integer page, Integer pageSize, Direction direction,
+	public List<ReturnList> list(ReturnList returnList, Direction direction,
 			String... propertis) {
-		Pageable pageable = new PageRequest(page-1,pageSize);
-		Page<ReturnList> pageReturnList = returnListRepository.findAll(new Specification<ReturnList>() {
+		List<ReturnList> pageReturnList = returnListRepository.findAll(new Specification<ReturnList>() {
 			
 			@Override
 			public Predicate toPredicate(Root<ReturnList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -109,8 +105,8 @@ public class ReturnListServiceImpl implements ReturnListService{
 				}
 				return predicate;
 			}
-		}, pageable);
-		return pageReturnList.getContent();
+		});
+		return pageReturnList;
 	}
 
 	@Override
@@ -150,6 +146,12 @@ public class ReturnListServiceImpl implements ReturnListService{
 	public void delete(Integer returnListId) {
 		returnListGoodsRepository.deleteByReturnListId(returnListId);
 		returnListRepository.delete(returnListId);
+	}
+
+	@Override
+	@Transactional
+	public void updateState(Integer returnListId) {
+		returnListRepository.updateState(returnListId);
 	}
 
 

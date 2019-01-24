@@ -9,9 +9,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -82,10 +79,8 @@ public class SaleListServiceImpl implements SaleListService{
 	}
 
 	@Override
-	public List<SaleList> list(SaleList saleList, Integer page, Integer pageSize, Direction direction,
-			String... propertis) {
-		Pageable pageable = new PageRequest(page-1, pageSize);
-		Page<SaleList> pageSaleList = saleListRepository.findAll(new Specification<SaleList>() {
+	public List<SaleList> list(SaleList saleList, Direction direction,String... propertis) {
+		List<SaleList> pageSaleList = saleListRepository.findAll(new Specification<SaleList>() {
 			
 			@Override
 			public Predicate toPredicate(Root<SaleList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -109,8 +104,8 @@ public class SaleListServiceImpl implements SaleListService{
 				}
 				return predicate;
 			}
-		}, pageable);
-		return pageSaleList.getContent();
+		});
+		return pageSaleList;
 	}
 
 	@Override
@@ -148,6 +143,12 @@ public class SaleListServiceImpl implements SaleListService{
 	public void delete(Integer saleListId) {
 		saleListGoodsRepository.deleteBySaleListId(saleListId);
 		saleListRepository.delete(saleListId);
+	}
+
+	@Override
+	@Transactional
+	public void updateState(Integer saleListId) {
+		saleListRepository.updateState(saleListId);
 	}
 
 	

@@ -37,7 +37,7 @@ public interface PuchaseListService {
 	 * @param propertis
 	 * @return
 	 */
-	public List<PuchaseList> list(PuchaseList puchaseList,Integer page,Integer pageSize,Direction direction,String...propertis);
+	public List<PuchaseList> list(PuchaseList puchaseList,Direction direction,String...propertis);
 	
 	/**
 	 * 根据进货单信息查询总数
@@ -51,4 +51,10 @@ public interface PuchaseListService {
 	 * @param puchaseListId
 	 */
 	public void delete(Integer puchaseListId);
+	
+	/**
+	 * 更新进货单的付款状态为已付
+	 * @param puchaseListId
+	 */
+	public void updateState(Integer puchaseListId);
 }

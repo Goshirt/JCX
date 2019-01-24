@@ -9,9 +9,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -63,7 +60,6 @@ public class PuchaseListServiceImpl implements PuchaseListService{
 			puchaseListGoods.setPuchaseList(puchaseList);
 			//保存进货单商品到数据库
 			puchaseListGoodsRepository.save(puchaseListGoods);
-			
 			//获取进货单商品对应的仓库中的商品信息
 			Goods goods = goodsRepository.findOne(puchaseListGoods.getGoodsId());
 			//更新仓库中商品的库存数量（加上本次进货的数量）
@@ -82,10 +78,8 @@ public class PuchaseListServiceImpl implements PuchaseListService{
 	}
 
 	@Override
-	public List<PuchaseList> list(PuchaseList puchaseList, Integer page, Integer pageSize, Direction direction,
-			String... propertis) {
-		Pageable pageable = new PageRequest(page-1, pageSize);
-		Page<PuchaseList> pagePuchaseList = puchaseListRepository.findAll(new Specification<PuchaseList>() {
+	public List<PuchaseList> list(PuchaseList puchaseList, Direction direction,String... propertis) {
+		List<PuchaseList> pagePuchaseList = puchaseListRepository.findAll(new Specification<PuchaseList>() {
 			
 			@Override
 			public Predicate toPredicate(Root<PuchaseList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -109,8 +103,8 @@ public class PuchaseListServiceImpl implements PuchaseListService{
 				}
 				return predicate;
 			}
-		}, pageable);
-		return pagePuchaseList.getContent();
+		});
+		return pagePuchaseList;
 	}
 
 	@Override
@@ -148,6 +142,12 @@ public class PuchaseListServiceImpl implements PuchaseListService{
 	public void delete(Integer puchaseListId) {
 		puchaseListGoodsRepository.deleteByPuchaseListId(puchaseListId);
 		puchaseListRepository.delete(puchaseListId);
+	}
+
+	@Override
+	@Transactional
+	public void updateState(Integer puchaseListId) {
+		puchaseListRepository.updateState(puchaseListId);
 	}
 
 	
