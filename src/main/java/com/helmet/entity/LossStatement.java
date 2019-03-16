@@ -33,9 +33,9 @@ public class LossStatement {
 	@Column(length=100)
 	private String lossNumber;    //报损单号
 	
-	@ManyToOne
-	@JoinColumn(name="customerId")
-	private Customer customer;    //客户
+//	@ManyToOne
+//	@JoinColumn(name="customerId")
+//	private Customer customer;    //客户
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createDate;    //开单日期
@@ -70,13 +70,13 @@ public class LossStatement {
 		this.lossNumber = lossNumber;
 	}
 
-	public Customer getCustomer() {
+	/*public Customer getCustomer() {
 		return customer;
 	}
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}
+	}*/
 
 	@JsonSerialize(using=CustomDateTimeSerializer.class)
 	public Date getCreateDate() {
@@ -121,8 +121,7 @@ public class LossStatement {
 
 	@Override
 	public String toString() {
-		return "LossStatement [lossStatementId=" + lossStatementId + ", lossNumber=" + lossNumber + ", customer="
-				+ customer + ", createDate=" + createDate + ", bCreateDate=" + bCreateDate + ", eCreateDate="
+		return "LossStatement [lossStatementId=" + lossStatementId + ", lossNumber=" + lossNumber +  ", createDate=" + createDate + ", bCreateDate=" + bCreateDate + ", eCreateDate="
 				+ eCreateDate + ", user=" + user + ", remark=" + remark + "]";
 	}
 

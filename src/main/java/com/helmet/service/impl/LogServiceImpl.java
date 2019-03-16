@@ -75,7 +75,6 @@ public class LogServiceImpl implements LogService{
 	@Override
 	public Long count(Log log) {
 		Long count=logRepository.count(new Specification<Log>() {
-
 			@Override
 			public Predicate toPredicate(Root<Log> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				Predicate predicate=cb.conjunction();

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 2018年5月30日
  */
 @Controller
+
 public class IndexController {
 	
 	/**

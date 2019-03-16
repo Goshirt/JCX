@@ -116,7 +116,7 @@ public class UserController {
 	}
 	
 	/**
-	 *保存该用户用户选择登录的角色 
+	 *保存该用户 用户选择登录的角色
 	 * @param roleId
 	 * @param session
 	 * @return

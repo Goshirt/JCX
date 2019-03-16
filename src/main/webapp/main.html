@@ -201,18 +201,6 @@
 	//显示当前时间
    function showTime(){
 		var currentDate=new Date();
-		/* this.year=currentDate.getFullYear();
-		this.month=currentDate.getMonth()+1;
-		this.date=currentDate.getDate();
-		this.day=new Array("星期日","星期一","星期二","星期三","星期四","星期五","星期六")[currentDate.getDay()]; 
-		this.hour=currentDate.getHours()<10?"0"+currentDate.getHours() : currentDate.getHours();
-		this.minute=currentDate.getMinutes()<10?"0"+currentDate.getMinutes() : currentDate.getMinutes();
-		this.second=currentDate.getSeconds()<10?"0"+currentDate.getSeconds() : currentDate.getSeconds(); */
-		
-
-		//加载显示时间
-	　   　// $("#clock").text("当前时间："+this.year+"年"+this.month+"月"+this.date+"日"+this.hour+":"+this.minute+":"+this.second+""+this.day); 
-		//alert("当前时间："+this.year+"年"+this.month+"月"+this.date+"日"+this.hour+":"+this.minute+":"+this.second)
 		$("#clock").text("当前时间："+currentDate.toLocaleString());
 	}   
 	
@@ -222,22 +210,17 @@
 </head>
 <body class="easyui-layout">
 	<div region="north" style="height: 72px;">
-		<table  width="100%" height="100%" cellspacing="0" border="0" cellpadding="0">
-			<tr>
-				<td width="381px" style="background: url('/static/images/top_left.jpg');"></td>
-				<td style="background: url('/static/images/top_center.jpg');">
-					<div id="userInfo" class="usesrInfo"></div>
-				</td>
-				<td valign="bottom" align="right" width="544px" style="background: url('/static/images/top_right.jpg');">
-					<div id="clock" class="clock"></div>
-				</td>
-			</tr>
-		</table>
+			<div style="height: 70px;float: right;">
+				<iframe  style="height: 66px; width: 310px;" frameborder="0"
+						allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&id=12&icon=1&num=5">
+				</iframe>
+			</div>
+
 	</div>
 	<div region="center">
 		<div class="easyui-tabs" fit="true" border="false" id="tabs">
 			<div title="首页" data-options="iconCls:'icon-home'">
-				<div align="center" style="padding-top: 100px;"><font color="red" size="10">欢迎进存销管理系统</font> </div>
+				<div align="center" style="padding-top: 100px;"><font color="red" size="10">欢迎使用</font> </div>
 			</div>
 		</div>
 	</div>
@@ -246,7 +229,6 @@
 	</div>
 	<div region="south" style="height: 50px;padding: 10px;" align="center">
 			Copyright &copy; 2018 Helmet All Rights Reserved.
-			<p><a href="www.helmet.xin" target="_blank">www.helmet.xin</a></p>
 	</div>
 	
 	<!-- Tab栏 右键点击时的菜单 -->

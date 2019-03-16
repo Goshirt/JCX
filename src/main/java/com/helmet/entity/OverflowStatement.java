@@ -33,9 +33,9 @@ public class OverflowStatement {
 	@Column(length=100)
 	private String overflowNumber;    //报溢单号
 	
-	@ManyToOne
-	@JoinColumn(name="customerId")
-	private Customer customer;    //客户
+//	@ManyToOne
+//	@JoinColumn(name="customerId")
+//	private Customer customer;    //客户
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createDate;    //开单日期
@@ -70,13 +70,13 @@ public class OverflowStatement {
 		this.overflowNumber = overflowNumber;
 	}
 
-	public Customer getCustomer() {
+	/*public Customer getCustomer() {
 		return customer;
 	}
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}
+	}*/
 
 	@JsonSerialize(using=CustomDateTimeSerializer.class)
 	public Date getCreateDate() {
@@ -121,8 +121,7 @@ public class OverflowStatement {
 
 	@Override
 	public String toString() {
-		return "OverflowStatement [overflowStatementId=" + overflowStatementId + ", overflowNumber=" + overflowNumber + ", customer="
-				+ customer + ", createDate=" + createDate + ", bCreateDate=" + bCreateDate + ", eCreateDate="
+		return "OverflowStatement [overflowStatementId=" + overflowStatementId + ", overflowNumber=" + overflowNumber + ", createDate=" + createDate + ", bCreateDate=" + bCreateDate + ", eCreateDate="
 				+ eCreateDate + ", user=" + user + ", remark=" + remark + "]";
 	}
 

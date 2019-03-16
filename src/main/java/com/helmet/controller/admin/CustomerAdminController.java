@@ -35,8 +35,12 @@ public class CustomerAdminController {
 	
 	@Resource
 	private LogService logService;
-	
-	
+
+
+	public CustomerAdminController() {
+		super();
+	}
+
 	/**
 	 * 获取客户列表
 	 * @param customer

@@ -21,7 +21,7 @@ function genLastMonthDayStr(){
 		month=(date.getMonth())<10?"0"+(date.getMonth()):(date.getMonth());
 		year = date.getFullYear();
 	}
-	return year+"-"+formatZero(month)+"-"+formatZero(date.getDate());
+	return year+"-"+month+"-"+formatZero(date.getDate());
 }
 
 function genLastWeekDayStr(){

@@ -137,6 +137,7 @@
 			return;
 		}
 		var selectRow=selectData[0];
+        $("#dlg2").dialog("open").dialog("setTitle","编辑商品");
 		$("#fm2").form("load",selectRow);
 		url="/admin/goods/save?goodsId="+selectRow.goodsId;
 	}

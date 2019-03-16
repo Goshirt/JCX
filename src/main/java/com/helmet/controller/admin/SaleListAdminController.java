@@ -8,8 +8,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.helmet.entity.*;
+import com.helmet.service.PerDaySaleService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.WebDataBinder;
@@ -19,10 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.helmet.entity.Log;
-import com.helmet.entity.SaleList;
-import com.helmet.entity.SaleListGoods;
-import com.helmet.entity.User;
 import com.helmet.service.LogService;
 import com.helmet.service.SaleListService;
 import com.helmet.service.UserService;
@@ -47,6 +46,9 @@ public class SaleListAdminController {
 	
 	@Resource
 	private LogService logService;
+
+	@Resource
+	private PerDaySaleService perDaySaleService;
 	
 	//按指定的格式 格式前台传来的JSON中的日期字段为Date格式
 	@InitBinder
@@ -78,7 +80,7 @@ public class SaleListAdminController {
 	/**
 	 * 保存销售单，销售单的商品，以及更新库存商品的销售价，库存量
 	 * @param saleList
-	 * @param goodsJson
+	 * @param saleGoodsToJson
 	 * @return
 	 */
 	@RequestMapping("/save")
@@ -102,8 +104,6 @@ public class SaleListAdminController {
 	/**
 	 * 根據用戶輸入的查詢條件獲取進貨單列表信息
 	 * @param saleList
-	 * @param page
-	 * @param pageSize
 	 * @return
 	 */
 	@RequestMapping("/list")
@@ -147,6 +147,16 @@ public class SaleListAdminController {
 		//设置操作用户
 		User currentUser=userService.getUserByUserName((String)SecurityUtils.getSubject().getPrincipal());
 		logService.log(new Log(Log.UPDATE_ACTION, "更新售货单的付款状态为已付:"+saleListId+":"+currentUser.getUserName()));
+		resultMap.put("success", true);
+		return resultMap;
+	}
+
+	public Map<String, Object> getPerDaySale(String beginDate,String endDate){
+		Map<String, Object> resultMap = new HashMap<>();
+		List<CountPerDaySale> saleCountList = perDaySaleService.getCountPerDaySaleByDate(beginDate,endDate);
+		User currentUser=userService.getUserByUserName((String)SecurityUtils.getSubject().getPrincipal());
+		logService.log(new Log(Log.UPDATE_ACTION, "查询了每天的销售统计:"+currentUser.getUserName()));
+		resultMap.put("rows",saleCountList);
 		resultMap.put("success", true);
 		return resultMap;
 	}

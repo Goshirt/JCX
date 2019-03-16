@@ -3,13 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.java1234</groupId>
+	<groupId>com.Helmet</groupId>
 	<artifactId>JXC</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<name>JXC</name>
-	<description>Demo project for Spring Boot</description>
+	<description>www.helmet.xin</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
