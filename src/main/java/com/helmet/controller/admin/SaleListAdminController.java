@@ -1,18 +1,15 @@
 package com.helmet.controller.admin;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
 import com.helmet.entity.*;
-import com.helmet.service.PerDaySaleService;
+import com.helmet.util.MathUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.web.bind.WebDataBinder;
@@ -47,9 +44,7 @@ public class SaleListAdminController {
 	@Resource
 	private LogService logService;
 
-	@Resource
-	private PerDaySaleService perDaySaleService;
-	
+
 	//按指定的格式 格式前台传来的JSON中的日期字段为Date格式
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -151,12 +146,92 @@ public class SaleListAdminController {
 		return resultMap;
 	}
 
-	public Map<String, Object> getPerDaySale(String beginDate,String endDate){
+	/**
+	 * 获取符合时间段内的每天销售统计数据
+	 * @param beginDate
+	 * @param endDate
+	 * @return
+	 * @throws ParseException
+	 */
+	@RequestMapping("/perDaySaleCount")
+	@RequiresPermissions(value = "每日销售统计")
+	public Map<String, Object> getPerDaySale(String beginDate,String endDate) throws ParseException {
 		Map<String, Object> resultMap = new HashMap<>();
-		List<CountPerDaySale> saleCountList = perDaySaleService.getCountPerDaySaleByDate(beginDate,endDate);
+		List<CountPerDaySale> resultList = new ArrayList<>();
+		List<Object> countList = saleListService.getCountPerDaySaleByDate(beginDate,endDate);
+		//获取搜索时间内的每一天时间集
+		List<String> days = DateUtil.getPerDay(beginDate,endDate);
+		for (String day: days) {
+			CountPerDaySale perDaySale = new CountPerDaySale();
+			perDaySale.setSaleDate(day);
+			boolean flag = false;
+			for (Object o: countList) {
+				Object[] objects = (Object[]) o;
+				//数据库搜索结果中有的日期
+				String saleDay = objects[2].toString().substring(0,10);
+				if (saleDay.equals(day)){
+					perDaySale.setSaleTotalMoney(MathUtil.float2Bit(Float.parseFloat(objects[1].toString())));
+					perDaySale.setCostTotalMoney(MathUtil.float2Bit(Float.parseFloat((objects[0].toString()))));
+					perDaySale.setProfits(MathUtil.float2Bit(perDaySale.getSaleTotalMoney()-perDaySale.getCostTotalMoney()));
+					flag = true;
+				}
+			}
+			//搜索的时间段没有销售数据
+			if (!flag){
+				perDaySale.setProfits(0);
+				perDaySale.setCostTotalMoney(0);
+				perDaySale.setSaleTotalMoney(0);
+			}
+			resultList.add(perDaySale);
+		}
 		User currentUser=userService.getUserByUserName((String)SecurityUtils.getSubject().getPrincipal());
 		logService.log(new Log(Log.UPDATE_ACTION, "查询了每天的销售统计:"+currentUser.getUserName()));
-		resultMap.put("rows",saleCountList);
+		resultMap.put("rows",resultList);
+		resultMap.put("success", true);
+		return resultMap;
+	}
+
+	/**
+	 * 获取符合时间段内的每月销售统计数据
+	 * @param beginDate
+	 * @param endDate
+	 * @return
+	 * @throws ParseException
+	 */
+	@RequestMapping("/perMonthSaleCount")
+	@RequiresPermissions(value = "每月销售统计")
+	public Map<String, Object> getPerMonthSale(String beginDate,String endDate) throws ParseException {
+		Map<String, Object> resultMap = new HashMap<>();
+		List<CountPerMonthSale> resultList = new ArrayList<>();
+		List<Object> countList = saleListService.getCountPerMonthSaleByDate(beginDate,endDate);
+		//获取搜索时间内的每月时间集
+		List<String> months = DateUtil.getPerMonth(beginDate,endDate);
+		for (String month: months) {
+			CountPerMonthSale perMonthSale = new CountPerMonthSale();
+			perMonthSale.setSaleMonth(month);
+			boolean flag = false;
+			for (Object o: countList) {
+				Object[] objects = (Object[]) o;
+				//数据库搜索结果中有的日期
+				String saleMonth = objects[2].toString().substring(0,7);
+				if (saleMonth.equals(month)){
+					perMonthSale.setSaleTotalMoney(MathUtil.float2Bit(Float.parseFloat(objects[0].toString())));
+					perMonthSale.setCostTotalMoney(MathUtil.float2Bit(Float.parseFloat((objects[1].toString()))));
+					perMonthSale.setProfits(MathUtil.float2Bit(perMonthSale.getSaleTotalMoney()-perMonthSale.getCostTotalMoney()));
+					flag = true;
+				}
+			}
+			//搜索的时间段没有销售数据
+			if (!flag){
+				perMonthSale.setProfits(0);
+				perMonthSale.setCostTotalMoney(0);
+				perMonthSale.setSaleTotalMoney(0);
+			}
+			resultList.add(perMonthSale);
+		}
+		User currentUser=userService.getUserByUserName((String)SecurityUtils.getSubject().getPrincipal());
+		logService.log(new Log(Log.UPDATE_ACTION, "查询了每月的销售统计:"+currentUser.getUserName()));
+		resultMap.put("rows",resultList);
 		resultMap.put("success", true);
 		return resultMap;
 	}

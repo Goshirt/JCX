@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8"/>
-<title>后台登录-进销存管理系统</title>
+<title>后台登录-文具零食小商品进销存管理系统</title>
 <meta name="author" content="DeathGhost" />
 <link rel="stylesheet" type="text/css" href="static/css/style.css" />
 <style>
@@ -27,7 +27,7 @@ canvas{z-index:-1;position:absolute;}
 		  var userName=$("#userName").val();
 		  var password=$("#password").val();
 		  var imageCode=$("#imageCode").val();
-		  $.post("/user/login",{
+          $.post("/user/login",{
 			  userName:userName,
 			  password:password,
 			  "imageCode":imageCode
@@ -52,7 +52,7 @@ canvas{z-index:-1;position:absolute;}
 						if (i==0) {
 							$("#roleList").append("<input type='radio' checked=true name='role' value='"+roles[i].roleId+"' />"+roles[i].roleName+"&nbsp;&nbsp;");
 						}else {
-							$("#roleList").append("<input type='radio' checked=true name='role' value='"+roles[i].roleId+"' />"+roles[i].roleName+"&nbsp;&nbsp;");
+							$("#roleList").append("<input type='radio'  name='role' value='"+roles[i].roleId+"' />"+roles[i].roleName+"&nbsp;&nbsp;");
 						}
 						//默认是不显示的，现在显示出来
 						document.getElementById("light").style.display="block";
@@ -60,7 +60,8 @@ canvas{z-index:-1;position:absolute;}
 					}
 				}
 			}else{
-				alert(result.errorInfo);
+				// alert(result.errorInfo);
+                  document.getElementById("errorInfo").innerHTML=result.errorInfo;
 			}
 		  })
 	  });
@@ -69,6 +70,7 @@ canvas{z-index:-1;position:absolute;}
 	
 	  function saveRole(){
 		  var roleId=$("input[name='role']:checked").val();
+		  alert(roleId)
 			$.post("/user/saveRole",{roleId:roleId},function(result){
 				if (result.success) {
 					window.location.href="/main.html";
@@ -84,7 +86,7 @@ canvas{z-index:-1;position:absolute;}
 <body>
 <dl class="admin_login">
  <dt>
-  <strong>进销存管理系统</strong>
+  <strong>文具零食小商品进销存管理系统</strong>
   <em>Lnvoicing Management System</em>
  </dt>
  <dd class="user_icon">
@@ -99,21 +101,23 @@ canvas{z-index:-1;position:absolute;}
     <img id="imgObj" title="看不清，换一张" src="/drawImage" onclick="changeImg()" />
   </div>
  </dd>
+    <div style="height: 10px;font-family: Verdana;color: red" id="errorInfo">
+    </div>
  <dd>
   <input type="button" id="loginBtn" value="立即登陆" class="submit_btn"/>
  </dd>
  <dd>
-  <p>© 2018.3-2018.9 Helmet 版权所有</p>
+  <p>© 2018-2019 Helmet 版权所有</p>
   <p><a href="www.helmet.xin" target="_blank">www.helmet.xin</a></p>
  </dd>
 </dl>
-	<div id="light" class="white_content"> 
+	<div id="light" class="white_content" style="background-color: #0c9076;height: 150px;">
           <p>请选择一个角色登录系统</p>
           <br/>
-          <div id="roleList">
+          <div id="roleList" style="margin-top: 15px;">
           </div>
           <br/>
-          <input type="button" value="提交" onclick="saveRole()"/>
+          <input type="button" style="width: 75px;height: 30px;margin-top: 20px;background-color: #48bca5" value="提交" onclick="saveRole()"/>
 	</div> 
 <div id="fade" class="black_overlay"> 
 </div> 

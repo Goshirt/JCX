@@ -41,7 +41,7 @@ public class GoodsTypeController {
 	 */
 	@ResponseBody
 	@PostMapping("/getTree")
-	@RequiresPermissions(value={"商品管理","进货入库","退货出库"})
+//	@RequiresPermissions(value={"基础资料","进货管理","销售管理","库存管理"})
 	public String getGoodsTypeTree() {
 		return loadGoodsTypeTree(-1).toString();
 	}

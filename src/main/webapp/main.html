@@ -7,7 +7,7 @@
 <script type="text/javascript" src="/static/jquery-easyui-1.3.3/locale/easyui-lang-zh_CN.js"></script>
 <head>
 <meta charset="UTF-8">
-<title>进存销管理系统</title>
+<title>小零食小文具进存销管理系统</title>
 <style type="text/css">
 
 	.clock {
@@ -201,7 +201,7 @@
 	//显示当前时间
    function showTime(){
 		var currentDate=new Date();
-		$("#clock").text("当前时间："+currentDate.toLocaleString());
+		$("#clock").text("时间："+currentDate.toLocaleString());
 	}   
 	
 
@@ -209,26 +209,39 @@
 </script>
 </head>
 <body class="easyui-layout">
-	<div region="north" style="height: 72px;">
-			<div style="height: 70px;float: right;">
-				<iframe  style="height: 66px; width: 310px;" frameborder="0"
-						allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&id=12&icon=1&num=5">
-				</iframe>
-			</div>
+	<div region="north" style="height: 72px;background-color: #048f74">
+		<div style="font-size: x-large;text-align: center;width: 360px;float: left;margin-top: 15px;">
+			文具零食小商品进销存管理系统
+		</div>
+		<div style="display: inline-block ;margin-top: 30px;">
+			<span id="userInfo" style="font-size: 15px;margin-left: 40px"></span>
+			<span id="clock" style="font-size: 15px;margin-left: 40px"></span>
+			<!--<span id="modifyPassword" style="font-size: 15px;margin-left: 40px">-->
+				<!--<a href="javascript:modifyPassword()" ><font color="red">修改密码</font></a>-->
+			<!--</span>-->
+			<!--<span id="quick" style="font-size: 15px;margin-left: 40px">-->
+				<!--<a href="javascript:logout()" ><font color="red">安全退出</font></a>-->
+			<!--</span>-->
+		</div>
+		<!--<div style="height: 70px;float: right;">-->
+			<!--<iframe  style="height: 66px; width: 310px;" frameborder="0"-->
+					<!--allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&id=12&icon=1&num=5">-->
+			<!--</iframe>-->
+		<!--</div>-->
 
 	</div>
-	<div region="center">
+	<div region="center" style="background-color: #0c9c6e">
 		<div class="easyui-tabs" fit="true" border="false" id="tabs">
-			<div title="首页" data-options="iconCls:'icon-home'">
+			<div title="首页" data-options="iconCls:'icon-home'" style="background-color: #0c9076">
 				<div align="center" style="padding-top: 100px;"><font color="red" size="10">欢迎使用</font> </div>
 			</div>
 		</div>
 	</div>
-	<div region="west" style="width: 200px;" title="导航菜单" split="true">
+	<div region="west" style="width: 200px;background-color: #0e947a" title="功能菜单" split="true">
 		<ul class="easyui-tree" id="tree"></ul>
 	</div>
-	<div region="south" style="height: 50px;padding: 10px;" align="center">
-			Copyright &copy; 2018 Helmet All Rights Reserved.
+	<div region="south" style="height: 50px;padding: 10px;background-color: #0d957a" align="center">
+			Copyright &copy; 2018-2019 Helmet All Rights Reserved.
 	</div>
 	
 	<!-- Tab栏 右键点击时的菜单 -->

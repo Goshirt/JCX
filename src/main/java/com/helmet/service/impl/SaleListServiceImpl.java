@@ -151,5 +151,16 @@ public class SaleListServiceImpl implements SaleListService{
 		saleListRepository.updateState(saleListId);
 	}
 
-	
+	@Override
+	public List<Object> getCountPerDaySaleByDate(String beginDate, String endDate) {
+		return saleListRepository.getCountPerDaySaleByDate(beginDate,endDate);
+	}
+
+
+	@Override
+	public List<Object> getCountPerMonthSaleByDate(String beginDate, String endDate){
+		return saleListRepository.getCountPerMonthSaleByDate(beginDate,endDate);
+	}
+
+
 }

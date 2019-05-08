@@ -51,7 +51,7 @@ public class GoodsAdminController {
 	 */
 	@RequestMapping("/goodsList")
 	@ResponseBody
-	@RequiresPermissions(value={"商品管理","进货入库","退货出库"})
+//	@RequiresPermissions(value={"商品管理","进货入库","退货出库"})
 	public Map<String, Object> getGoodsList(Goods goods,@RequestParam(value="page",required=false)Integer page,@RequestParam(value="rows",required=false)Integer pageSize) {
 		Map<String, Object> resultMap=new HashMap<>();
 		List<Goods> goodsList=goodsService.getGoodsList(goods, page, pageSize, Direction.ASC, "id");
@@ -209,8 +209,6 @@ public class GoodsAdminController {
 	/**
 	 * 删除商品 
 	 * @param goodsId
-	 * @param num
-	 * @param price
 	 * @return
 	 * @throws Exception
 	 */

@@ -75,9 +75,33 @@ public class DateUtil {
 		return perDateList;
 	}
 
+	/**
+	 * 获取时间段内的月份集
+	 * @param beginDate
+	 * @param endDate
+	 * @return
+	 * @throws ParseException
+	 */
+	public static List<String> getPerMonth(String beginDate,String endDate) throws  ParseException{
+		ArrayList<String> result = new ArrayList<>();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");//格式化为年月
+		Calendar min = Calendar.getInstance();
+		Calendar max = Calendar.getInstance();
+		min.setTime(sdf.parse(beginDate));
+		min.set(min.get(Calendar.YEAR), min.get(Calendar.MONTH), 1);
+		max.setTime(sdf.parse(endDate));
+		max.set(max.get(Calendar.YEAR), max.get(Calendar.MONTH), 2);
+		Calendar curr = min;
+		while (curr.before(max)) {
+			result.add(sdf.format(curr.getTime()));
+			curr.add(Calendar.MONTH, 1);
+		}
+		return result;
+	}
+
 	public static void main(String[] args) {
 		try {
-			List<String> perDateList = getPerDay("2018-10-11","2018-12-10");
+			List<String> perDateList = getPerMonth("2018-10-11","2019-12-10");
 			System.out.println(perDateList.size());
 			for (String stringDate:perDateList) {
 				System.out.println(stringDate);

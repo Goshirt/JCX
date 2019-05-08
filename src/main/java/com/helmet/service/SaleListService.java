@@ -57,4 +57,20 @@ public interface SaleListService {
 	 * @param saleListId
 	 */
 	public void updateState(Integer saleListId);
+
+	/**
+	 * 获取在指定时间范围内的每天销售统计数据
+	 * @param beginDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<Object> getCountPerDaySaleByDate(String beginDate, String endDate);
+
+	/**
+	 * 获取在指定时间范围内的每月销售统计数据
+	 * @param beginDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<Object> getCountPerMonthSaleByDate(String beginDate, String endDate);
 }

@@ -24,13 +24,6 @@
 		$("#saleDate").datebox("setValue",genTodayStr());
 		//通过后台加载获取销售单号
 		$("#pn").load("/admin/saleList/genSaleNumber");
-		/* $("#customerId").combobox({
-			mode:'remote',
-			url:'/admin/customer/comboboxList',
-			textField:'name',
-			valueField:'customerId',
-			delay:100
-		}) */
 		
 		$("#dg").datagrid({
 			onDblClickRow:function(index,row){
@@ -50,7 +43,7 @@
 				$("#saveAddAddNextButton").show();
 				$("#dlg4").dialog("open").dialog("setTitle","添加到销售单");
 				$("#fm4").form("load",row);
-				$("#price").numberbox("setValue",row.lastPuchasingPrice);
+				$("#price").numberbox("setValue",row.sellingPrice);
 				$("#num").focus();
 				//添加操作
 				$("#action").val("add");
@@ -67,7 +60,7 @@
 	//删除商品类型
 	function deleteGoodsType(){
 		var select=$("#tree").tree("getSelected");
-		$.messager.confirm("系统提示", "您确定删除选中的商品类型吗？", function(r){
+		$.messager.confirm("系统提示", "是否删除选中的商品类型吗？", function(r){
 			if(r){
 				$.post("/admin/goodsType/delete",{goodsTypeId:select.id},function(result){
 					if (result.success) {
@@ -154,7 +147,7 @@
 		var row=select[0];
 		$("#dlg4").dialog("open").dialog("setTitle","添加到销售单");
 		$("#fm4").form("load",row);
-		$("#price").numberbox("setValue",row.lastPuchasingPrice);
+		$("#price").numberbox("setValue",row.sellingPrice);
 		$("#num").focus();
 		//添加操作
 		$("#action").val("add");
@@ -277,7 +270,7 @@
 	}
 	
 	function saveSale(){
-		//设置销售单的值
+		//设置销售单的单号
 		$("#saleNumber").val($("#pn").text())
 		//设置隐藏的销售单商品的json格式的数据，将dg表单的所有数据转换为json格式
 		$("#saleGoodsToJson").val(JSON.stringify($("#dg").datagrid("getData").rows));
@@ -311,7 +304,7 @@
 	
 </script>
 </head>
-<body class="easyui-layout" style="margin: 2px;">
+<body class="easyui-layout" style="margin: 2px;background-color: #0c9076">
 	<div data-options="region:'north'" style="height: 130px;padding: 5px;border: 1px;padding-top: 17px;" split="true">
 		<!-- 销售单的统计信息 -->
 		<fieldset style="border-color: #E7F0FF">
@@ -330,7 +323,7 @@
 							&nbsp;&nbsp;&nbsp;&nbsp;实付金额：<input type="text" id="truePayMoney" name="truePayMoney" class="easyui-validatebox" required="true"  size="10"/>
 						</td>
 						<td>
-							&nbsp;&nbsp;&nbsp;&nbsp;收货日期：<input type="text" id="saleDate" name="saleDate" class="easyui-datebox" required="true" data-options="editable:false" size="18"/>
+							&nbsp;&nbsp;&nbsp;&nbsp;销售日期：<input type="text" id="saleDate" name="saleDate" class="easyui-datebox" required="true" data-options="editable:false" size="18"/>
 						</td>
 						<td>
 						</td>
@@ -358,8 +351,8 @@
 	</div>
 	
 	<!-- 销售单的商品列表 -->
-	<div region="center" style="padding: 2px;border: 1px;margin-top: 5px;">
-		<table id="dg" class="easyui-datagrid"  pagination="true" style="height：1200px" fitColumns="true" fit="true" singleSelect="true"
+	<div region="center" style="padding: 2px;border: 1px;margin-top: 5px;background-color: #0c9c6e">
+		<table id="dg" class="easyui-datagrid"  pagination="true" style="height：1200px; background-color: #0c9c6e" fitColumns="true" fit="true" singleSelect="true"
 				rowNumbers="true" toolbar="#tb" title="销售单商品列表">
 			<thead>
 					<th field="code" width="30" align="center">商品编码</th>
@@ -367,7 +360,7 @@
 					<th field="model" width="50" align="center">型号</th>
 					<th field="unit" width="50" align="center">单位</th>
 					<th field="num" width="50" align="center">数量</th>
-					<th field="price" width="50" align="center">单价(¥)</th>
+					<th field="price" width="50" align="center">本次销售价(¥)</th>
 					<th field="total" width="50" align="right">总金额(¥)</th>
 			</thead>
 		</table>
@@ -408,8 +401,8 @@
 						<th field="name" width="240px;" align="center">商品名称</th>
 						<th field=inventoryQuantity width="60px;" align="center">库存量</th>
 						<th field="unit" width="40px;" align="center">单位</th>
-						<th field="lastPuchasingPrice" width="60px;" align="right" formatter="formatterToPrice">单价</th>
-						<th field="purchasingPrice" width="60px;" align="right"formatter="formatterToPrice">均价</th>
+						<th field="purchasingPrice" width="60px;" align="right" formatter="formatterToPrice">进货价</th>
+						<th field="sellingPrice" width="60px;" align="right"formatter="formatterToPrice">建议销售价</th>
 					</thead>
 				</table>
 			</div>
@@ -438,7 +431,7 @@
 	</div>
 	
 	<!-- 货单的商品类型对话框 -->
-	<div id="dlg4" class="easyui-dialog" style="width: 450px;height: 300px;padding: 5px;" closed="true" buttons="#bt4"
+	<div id="dlg4" class="easyui-dialog" style="width: 500px;height: 300px;padding: 5px;" closed="true" buttons="#bt4"
 	     data-options="onClose:function(){resetValue()}">
 	     <fieldset style="border-color: #E7F0FF">
 	     	<legend>商品信息</legend>
@@ -460,8 +453,8 @@
 	     				<td><input type="text" id="unit" name="unit" readonly="readonly" size="13"></td>
 	     			</tr>
 	     			<tr>
-	     				<td>商品单价:</td>
-	     				<td><input type="text" id="lastPuchasingPrice" name="lastPuchasingPrice" readonly="readonly" size="13"></td>
+	     				<td>商品进货价:</td>
+	     				<td><input type="text" id="purchasingPrice" name="purchasingPrice" readonly="readonly" size="13"></td>
 	     				<td>当前库存:</td>
 	     				<td><input type="text" id="inventoryQuantity" name="inventoryQuantity" readonly="readonly" size="13"></td>
 	     			</tr>
@@ -476,7 +469,7 @@
 						<td>
 							<input type="text" id="num" name="num" class="easyui-numberbox" data-options="min:0" required="true" size="13"/>
 						</td>
-						<td align="right" width="60">售价：</td>
+						<td align="right" width="60">销售价：</td>
 						<td>
 							<input type="text" id="price" name="price" class="easyui-numberbox" data-options="min:0,precision:2" required="true" size="13"/>
 						</td>

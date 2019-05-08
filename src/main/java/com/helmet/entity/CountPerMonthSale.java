@@ -6,7 +6,7 @@ package com.helmet.entity;
  * @site www.helmet.xin
  * @create 2019-03-03 17:18
  */
-public class CountPerDaySale {
+public class CountPerMonthSale {
 
     //当天销售总金额
     private float saleTotalMoney;
@@ -15,7 +15,7 @@ public class CountPerDaySale {
     //利润
     private float profits;
 
-    private String saleDate;
+    private String saleMonth;
 
     public float getSaleTotalMoney() {
         return saleTotalMoney;
@@ -41,12 +41,11 @@ public class CountPerDaySale {
         this.profits = profits;
     }
 
-    public String getSaleDate() {
-        return saleDate;
+    public String getSaleMonth() {
+        return saleMonth;
     }
 
-    public void setSaleDate(String saleDate) {
-        this.saleDate = saleDate;
+    public void setSaleMonth(String saleMonth) {
+        this.saleMonth = saleMonth;
     }
-
 }
